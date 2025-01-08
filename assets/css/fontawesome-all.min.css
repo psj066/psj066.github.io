@@ -24,7 +24,7 @@
 /* Main container for the slider - this holds the images and navigation buttons */
 .slider-container {
     position: relative; /* Allows for absolute positioning of navigation buttons */
-    width: 60%; /* Sets the slider width to 60% of the parent container */
+    width: 80%; /* Sets the slider width to 60% of the parent container */
     max-width: 800px; /* Maximum width for larger screens */
     overflow: hidden; /* Hides the overflow content (only one image is visible at a time) */
     border-radius: 10px; /* Rounds the corners of the slider */

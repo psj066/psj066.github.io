@@ -49,7 +49,7 @@
 				$window.on('load.hl_scrolly', function() {
 
 					$('.scrolly').scrolly({
-						speed: 1500,
+						speed: 2500,
 						parent: $wrapper,
 						pollOnce: true
 					});
@@ -66,7 +66,7 @@
 
 			// Scrolly.
 				$('.scrolly').scrolly({
-					speed: 1500
+					speed: 2500
 				});
 
 		}
@@ -161,7 +161,7 @@
 			// Scrollex.
 				$this.scrollex({
 					mode: 'middle',
-					delay: 200,
+					delay: 100,
 					top: '-10vh',
 					bottom: '-10vh',
 					init: function() { $bg.removeClass('active'); },
