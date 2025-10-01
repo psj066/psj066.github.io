@@ -10,143 +10,66 @@
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    :root{
-      --card-radius:1.25rem;
-      --shadow-soft:0 12px 40px rgba(15,23,42,.12);
-      --easing:cubic-bezier(.2,0,.38,.9);
-      --flip-ms:420ms;
-    }
-    body{font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif}
-
-    /* 카드 스택 */
-    .stack{
-      position:relative;
-      perspective:1200px;
-      user-select:none;
-    }
-    .card{
-      position:absolute; inset:0;
-      display:grid; place-items:center;
-      border-radius:var(--card-radius);
-      box-shadow:var(--shadow-soft);
-      background:white;
-      overflow:hidden;
-      will-change:transform,opacity;
-      transition:transform var(--flip-ms) var(--easing), opacity 220ms var(--easing);
-      touch-action:none; /* PointerEvent 드래그 위해 */
-    }
-
-    /* 역할 기반 z-index */
-    .card.top { z-index: 2; }
-    .card.back { z-index: 1; }
-
-    /* 기본은 흰 카드만 보이게 */
-    .card .card-bg { display: none; }
-    /* 안내(처음) 상태에서만 보라색 배경 노출 */
-    .card.instruction .card-bg { display: block; }
-
-    .card-bg{
-      position:absolute; inset:0;
-      background: radial-gradient(120% 120% at 0% 0%,
-                  #a78bfa 0%, #6366f1 45%, #4338ca 100%);
-    }
-    .card-content{
-      position:relative; z-index:1;
-      padding:1.5rem;
-      text-align:center;
-      color:#0f172a;
-    }
-    .card.instruction .card-content{
-      color:white;
-    }
-    .hidden-card{
-      opacity:0; pointer-events:none;
-    }
-
-    /* 스와이프 중 회전 살짝 */
-    .dragging{
-      transition:none !important;
-      cursor:grabbing;
-    }
-
-    /* 날아가는 애니메이션(방향별) */
-    .fly-left{ transform: translateX(-130vw) rotate(-24deg) !important; opacity:0 !important; }
-    .fly-right{ transform: translateX(130vw) rotate(24deg) !important; opacity:0 !important; }
-
-    /* 진행바 */
-    .bar{ height:.5rem; background:#e2e8f0; border-radius:9999px; overflow:hidden; }
-    .bar>span{ display:block; height:100%; background:#6366f1; width:0%; transition:width 200ms var(--easing); }
-
-    /* 접근성: 모션 민감 */
-    @media (prefers-reduced-motion: reduce){
-      .card{ transition: opacity 160ms ease }
-      .fly-left,.fly-right{ transform:none !important; }
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css" />
+  
 </head>
-<body class="min-h-screen flex flex-col items-center p-5 md:p-8">
+<body class="min-h-screen flex flex-col items-center p-4 md:p-8">
 
   <!-- 헤더 -->
-  <header class="w-full max-w-3xl mb-6">
-    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+  <header class="w-full max-w-3xl mb-4 md:mb-6">
+    <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-slate-900">
       2025-2 포공 CCC 순대 질문 뽑기
     </h1>
-    <p class="mt-2 text-slate-600 leading-relaxed">
-      처음엔 질문이 숨겨져 있어요. 화면을 탭/클릭하면 질문이 나타납니다.
-      좌/우로 스와이프해 카드를 넘기세요. (←/→ 키도 가능)
+    <p class="mt-1 text-sm md:text-base text-slate-600 leading-relaxed line-clamp-2">
+      처음엔 질문이 숨겨져 있어요. 화면을 탭/클릭하면 질문이 나타납니다. 좌/우로 스와이프해 카드를 넘기세요. (←/→ 키도 가능)
     </p>
   </header>
 
   <!-- 상태바 -->
-  <section class="w-full max-w-3xl mb-4">
+  <section class="w-full max-w-3xl mb-3 md:mb-4">
     <div class="flex items-center justify-between text-sm text-slate-600">
       <div id="counter" class="font-medium">0 / 0</div>
       <button id="resetBtn"
         class="px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         type="button" aria-label="다시 섞기">다시 섞기</button>
     </div>
-    <div class="mt-2 bar rounded-full">
-      <span id="progress"></span>
+    <div class="mt-2 h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+      <div id="progress" class="h-full bg-indigo-500 w-0"></div>
     </div>
   </section>
 
-  <!-- 카드 스택 (맨 위: .top, 아래: .back) -->
-  <main class="w-full max-w-3xl">
-    <div id="stack" class="stack w-full aspect-[3/2] sm:aspect-[5/3]">
+  <!-- 카드 스택 (모바일: 세로형 비율) -->
+  <main class="w-full max-w-3xl safe-bottom">
+    <div id="stack" class="stack w-full aspect-[10/13] sm:aspect-[5/3] mb-4 md:mb-6">
       <!-- Top card -->
       <div id="cardTop" class="card instruction top select-none" role="button" tabindex="0" aria-label="카드">
         <div class="card-bg"></div>
         <div class="card-content max-w-2xl">
-          <div id="topText" class="text-xl md:text-2xl font-semibold leading-relaxed tracking-[-0.01em]">
+          <p id="topText" class="text-[22px] md:text-2xl leading-snug font-semibold tracking-[-0.01em]">
             화면을 눌러 첫 질문을 보여주세요 👇
-          </div>
+          </p>
         </div>
       </div>
       <!-- Back card (아래 대기) -->
       <div id="cardNext" class="card back hidden-card select-none" aria-hidden="true">
         <div class="card-bg" style="opacity:.06"></div>
         <div class="card-content max-w-2xl">
-          <div id="nextText" class="text-xl md:text-2xl font-semibold leading-relaxed tracking-[-0.01em] text-slate-900">
-            <!-- 다음 질문 미리 로드 -->
-          </div>
+          <p id="nextText" class="text-[22px] md:text-2xl leading-snug font-semibold tracking-[-0.01em] text-slate-900"></p>
         </div>
       </div>
     </div>
 
-    <!-- 액션 -->
-    <div class="mt-6 flex items-center gap-3">
+    <!-- 하단 컨트롤: 엄지 우선 배치 -->
+    <div class="mt-3 md:mt-6 flex items-center gap-2 md:gap-3">
+      <span class="text-sm text-slate-500">남은 카드 <span id="remaining">0</span>장</span>
       <button id="copyBtn"
-        class="rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 px-4 py-3 font-medium shadow-sm border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
+        class="ml-auto min-h-[48px] rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200
+               text-slate-900 px-4 py-3.5 font-medium shadow-sm border border-slate-200
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
         type="button">질문 복사</button>
-
-      <span class="text-sm text-slate-500 ml-auto">
-        남은 카드 <span id="remaining">0</span>장
-      </span>
     </div>
 
-    <p id="endMsg" class="mt-6 hidden text-center text-slate-600">
+    <p id="endMsg" class="mt-5 hidden text-center text-slate-600">
       모든 질문을 다 뽑았어요! <span class="font-medium">다시 섞기</span>를 눌러 새로 시작하세요.
     </p>
   </main>
@@ -155,231 +78,6 @@
   <script src="./questions.js"></script>
 
   <!-- 스크립트 -->
-  <script>
-    // 데이터
-    const questions = Array.isArray(window.QUESTIONS) ? window.QUESTIONS.slice() : [];
-
-    // 상태
-    let deck = [];
-    let idx = -1;                 // -1: 아직 첫 질문 미공개
-    let isDragging = false;
-    let startX = 0, startY = 0;
-    let curX = 0, curY = 0;
-
-    // 고정 엘리먼트(초기 DOM)
-    const stackEl     = document.getElementById('stack');
-    const cardTopEl   = document.getElementById('cardTop');
-    const topTextDom  = document.getElementById('topText');
-    const cardNextEl  = document.getElementById('cardNext');
-    const nextTextDom = document.getElementById('nextText');
-
-    // 스왑 가능한 핸들 (초기에는 고정 엘리먼트를 가리킴)
-    let topCard   = cardTopEl;
-    let backCard  = cardNextEl;
-    let topTextEl = topTextDom;
-    let backTextEl= nextTextDom;
-
-    const counter   = document.getElementById('counter');
-    const remaining = document.getElementById('remaining');
-    const progress  = document.getElementById('progress');
-    const resetBtn  = document.getElementById('resetBtn');
-    const copyBtn   = document.getElementById('copyBtn');
-    const endMsg    = document.getElementById('endMsg');
-
-    // 유틸
-    const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
-
-    function updateHUD() {
-      const total = deck.length;
-      const current = Math.max(idx, 0);
-      counter.textContent = `${Math.min(current, total)} / ${total}`;
-      remaining.textContent = Math.max(total - current, 0);
-      const ratio = total ? Math.min(current / total, 1) : 0;
-      progress.style.width = `${ratio * 100}%`;
-      copyBtn.disabled = (idx < 0 || idx >= deck.length);
-      copyBtn.classList.toggle('opacity-50', copyBtn.disabled);
-      copyBtn.classList.toggle('pointer-events-none', copyBtn.disabled);
-    }
-
-    function resetDeck() {
-      deck = shuffle(questions);
-      idx = -1;
-      endMsg.classList.add('hidden');
-
-      // 클래스 초기화: Top은 안내(보라), Back은 숨김
-      topCard.classList.add('instruction','top');
-      topCard.classList.remove('back','hidden-card','fly-left','fly-right','dragging');
-      backCard.classList.add('back','hidden-card');
-      backCard.classList.remove('top','fly-left','fly-right','dragging');
-
-      if (deck.length === 0) {
-        topTextEl.textContent = '질문 목록이 비어 있어요. questions.js를 확인해 주세요.';
-        backTextEl.textContent = '';
-        updateHUD();
-        return;
-      }
-
-      topTextEl.textContent = '화면을 눌러 첫 질문을 보여주세요 👇';
-      backTextEl.textContent = deck[0]; // 첫 질문을 아래에 예열
-      // 위치 초기화
-      topCard.style.transform = '';
-      topCard.style.opacity = '';
-
-      updateHUD();
-    }
-
-    function revealFirst() {
-      if (idx >= 0 || deck.length === 0) return;
-
-      idx = 0;
-      topTextEl.textContent = deck[0];
-      topCard.classList.remove('instruction'); // 이제부터 흰 카드만
-
-      // 다음 질문 미리 채우기
-      if (deck.length > 1) {
-        backTextEl.textContent = deck[1];
-        backCard.classList.add('back','hidden-card'); // 아래는 기본 숨김
-      } else {
-        backTextEl.textContent = '';
-        backCard.classList.add('hidden-card');
-      }
-      updateHUD();
-    }
-
-    // 포인터 제스처
-    function onPointerDown(e){
-      // 첫 터치로 '공개 + 드래그'를 한 번에
-      if (idx < 0){
-        revealFirst();
-        // return 없이 이어서 드래그 시작
-      }
-      isDragging = true;
-      startX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-      startY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-      topCard.classList.add('dragging');
-      if (e.pointerId !== undefined) { topCard.setPointerCapture?.(e.pointerId); }
-    }
-
-    function onPointerMove(e){
-      if (!isDragging) return;
-      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? startX;
-      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? startY;
-      curX = x - startX;
-      curY = y - startY;
-
-      const rot = Math.max(Math.min(curX / 16, 24), -24);
-      topCard.style.transform = `translate(${curX}px, ${curY}px) rotate(${rot}deg)`;
-      topCard.style.opacity = `${Math.max(0.6, 1 - Math.abs(curX) / 600)}`;
-    }
-
-    function onPointerUp(){
-      if (!isDragging) return;
-      isDragging = false;
-      topCard.classList.remove('dragging');
-
-      const threshold = Math.min(window.innerWidth * 0.18, 200);
-      if (curX > threshold){
-        flyOut('right');
-      } else if (curX < -threshold){
-        flyOut('left');
-      } else {
-        topCard.style.transform = '';
-        topCard.style.opacity = '';
-      }
-      curX = curY = 0;
-    }
-
-    function flyOut(direction){
-      // 다음 카드가 있으면 미리 아래 카드를 드러내 자연스러운 노출
-      const nextIdx = idx + 1;
-      if (nextIdx < deck.length) {
-        backCard.classList.remove('hidden-card');
-      }
-
-      // 위 카드 날리기
-      topCard.classList.add(direction === 'right' ? 'fly-right' : 'fly-left');
-
-      const onEnd = () => {
-        topCard.removeEventListener('transitionend', onEnd);
-
-        // 날아간 카드 리셋 후 뒤로 보관
-        topCard.classList.remove('fly-left','fly-right','dragging','top');
-        topCard.classList.add('back','hidden-card');
-        topCard.style.transform = '';
-        topCard.style.opacity = '';
-
-        // 🔁 참조 스왑 (DOM 두 장을 교차)
-        [topCard, backCard]     = [backCard, topCard];
-        [topTextEl, backTextEl] = [backTextEl, topTextEl];
-
-        // 역할 클래스도 교체
-        topCard.classList.remove('hidden-card','back');
-        topCard.classList.add('top');
-        backCard.classList.add('back');
-
-        // 인덱스 증가: 이제 화면의 topCard는 deck[idx+1]
-        idx++;
-        updateHUD();
-
-        // 끝 처리
-        if (idx >= deck.length) {
-          topTextEl.textContent = '끝! 🎉';
-          endMsg.classList.remove('hidden');
-          backTextEl.textContent = '';
-          backCard.classList.add('hidden-card');
-          return;
-        }
-
-        // 새로운 뒤 카드에 '다다음' 질문 프리로드
-        const upcoming = idx + 1;
-        if (upcoming < deck.length) {
-          backTextEl.textContent = deck[upcoming];
-          backCard.classList.add('hidden-card'); // 아래는 기본 숨김
-        } else {
-          backTextEl.textContent = '';
-          backCard.classList.add('hidden-card');
-        }
-      };
-      topCard.addEventListener('transitionend', onEnd, { once:true });
-    }
-
-    // ⬇⬇⬇ 이벤트 바인딩 (Delegate to #stack) — 여기만 바뀌었어요!
-    // top 카드가 스왑되어도 항상 최신 .card.top 에서 드래그가 시작되도록 컨테이너에 위임
-    ['pointerdown','touchstart'].forEach(evt => {
-      stackEl.addEventListener(evt, (e) => {
-        // 스택 영역 내에서만 처리, 그리고 top 카드 위에서만 시작
-        const topEl = document.querySelector('.card.top');
-        if (!topEl) return;
-        if (!e.target.closest('.card.top')) {
-          // 초기 상태에서 카드 외 영역을 탭했을 때도 첫 공개는 되도록
-          if (idx < 0) revealFirst();
-          return;
-        }
-        onPointerDown(e);
-      }, { passive: true });
-    });
-
-    // 이동/해제는 전역 유지
-    ['pointermove','touchmove'].forEach(evt => window.addEventListener(evt, onPointerMove, {passive:true}));
-    ['pointerup','pointercancel','touchend','touchcancel'].forEach(evt => window.addEventListener(evt, onPointerUp, {passive:true}));
-
-    // 복사
-    copyBtn.addEventListener('click', async ()=>{
-      try{
-        const text = (idx >= 0 && idx < deck.length) ? deck[idx] : '';
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = '복사됨!';
-        setTimeout(()=>copyBtn.textContent='질문 복사', 1200);
-      }catch{
-        alert('복사에 실패했어요. 브라우저 설정을 확인해 주세요.');
-      }
-    });
-
-    // 리셋
-    resetBtn.addEventListener('click', resetDeck);
-
-    // 초기화
-    resetDeck();
-  </script>
+  <script src="./script.js"></script>
 </body>
 </html>
