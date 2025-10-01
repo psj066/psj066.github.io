@@ -1,184 +1,254 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="bg-slate-50">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025-2 포공 CCC 순대 질문 뽑기</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f0f4f8; /* 배경색 변경 */
-        }
-        /* 카드 컨테이너에 perspective를 추가하여 3D 효과를 줍니다. */
-        .card-container {
-            perspective: 1000px;
-        }
-        /* 카드 플립 애니메이션을 위한 스타일 */
-        .card {
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-            cursor: pointer;
-        }
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden; /* Safari */
-            backface-visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .card-front {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 그라데이션 변경 */
-            color: white;
-        }
-        .card-back {
-            background-color: #ffffff;
-            color: #333;
-            transform: rotateY(180deg);
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>2025-2 포공 CCC 순대 질문 뽑기 — 새 디자인</title>
+
+  <!-- Pretendard -->
+  <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --card-radius: 1.25rem;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, .10);
+      --easing: cubic-bezier(.2, 0, .38, .9);
+      --flip-ms: 500ms;
+    }
+    body { font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR', sans-serif; }
+
+    .card-3d { perspective: 1200px; }
+    .card {
+      position: relative; transform-style: preserve-3d;
+      transition: transform var(--flip-ms) var(--easing);
+      border-radius: var(--card-radius); box-shadow: var(--shadow-soft);
+      cursor: pointer;
+    }
+    .card.is-flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      padding: 1.5rem; border-radius: inherit;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    }
+    .card-front {
+      background: radial-gradient(120% 120% at 0% 0%, #a78bfa 0%, #6366f1 45%, #4338ca 100%);
+      color: white;
+    }
+    .card-back { background: white; color: #0f172a; transform: rotateY(180deg); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: opacity 200ms ease; transform: none !important; }
+      .card.is-flipped { opacity: 1; }
+      .card-front, .card-back { transform: none !important; }
+    }
+
+    .tap-target { min-height: 48px; }
+    .soft-transition { transition: all 180ms var(--easing); }
+  </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+<body class="min-h-screen flex flex-col items-center p-5 md:p-8">
 
-    <div class="text-center mb-8">
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">2025-2 포공 CCC 순대 질문 뽑기</h1>
-        <p class="text-gray-600 px-2">카드를 눌러 질문을 확인하고, 다음 카드를 뽑아주세요!</p>
+  <!-- 헤더 -->
+  <header class="w-full max-w-3xl mb-6">
+    <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+      2025-2 포공 CCC 순대 질문 뽑기
+    </h1>
+    <p class="mt-2 text-slate-600 leading-relaxed">
+      카드를 눌러 뒤집고, <span class="font-medium text-slate-800">스페이스/엔터</span>로 다음 질문을 뽑을 수 있어요.
+      <span class="text-slate-500">(Shift+Space: 뒤집기)</span>
+    </p>
+  </header>
+
+  <!-- 상태바 -->
+  <section class="w-full max-w-3xl mb-4">
+    <div class="flex items-center justify-between text-sm text-slate-600">
+      <div id="counter" class="font-medium">0 / 0</div>
+      <button id="resetBtn"
+              class="tap-target soft-transition px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              type="button" aria-label="다시 섞기">
+        다시 섞기
+      </button>
     </div>
+    <div class="mt-2 h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+      <div id="progress" class="h-full bg-indigo-500 w-0"></div>
+    </div>
+  </section>
 
-    <!-- 카드 영역 -->
-    <div id="card-area" class="card-container w-full max-w-lg h-80 mb-8 invisible">
-        <div id="card" class="card w-full h-full">
-            <div class="card-face card-front text-2xl sm:text-3xl font-bold text-center px-4">
-                질문 카드 🧐
-            </div>
-            <div id="card-back" class="card-face card-back font-semibold text-lg md:text-xl leading-relaxed text-center">
-                <!-- 질문 내용이 여기에 들어갑니다. -->
-            </div>
+  <!-- 카드 -->
+  <main class="w-full max-w-3xl">
+    <div class="card-3d w-full aspect-[3/2] sm:aspect-[5/3]">
+      <div id="card"
+           class="card w-full h-full select-none"
+           role="button" tabindex="0"
+           aria-label="질문 카드 뒤집기 (엔터 키로 뒤집기)"
+           aria-pressed="false">
+        <div class="card-face card-front">
+          <div class="text-center px-6">
+            <div class="text-3xl md:text-4xl font-bold tracking-tight drop-shadow-sm">질문 카드 🧐</div>
+            <p class="mt-3 text-white/90 md:text-lg">클릭/탭 또는 Enter로 뒤집기</p>
+          </div>
         </div>
+        <div class="card-face card-back">
+          <div class="max-w-2xl text-center px-6">
+            <p id="questionText"
+               class="text-xl md:text-2xl font-semibold leading-relaxed tracking-[-0.01em]"
+               aria-live="polite">
+              질문을 뽑아 주세요!
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- 버튼 영역 -->
-    <button id="draw-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105">
+    <!-- 액션 영역 -->
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <button id="drawBtn"
+              class="tap-target soft-transition rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-5 py-3 font-semibold shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+              type="button">
         질문 뽑기
-    </button>
-    
-    <p id="end-message" class="text-gray-500 mt-8 hidden">모든 질문을 다 뽑았습니다! 처음으로 돌아가려면 '다시 뽑기'를 눌러주세요.</p>
+      </button>
 
-    <script>
-        const card = document.getElementById('card');
-        const cardArea = document.getElementById('card-area');
-        const cardBack = document.getElementById('card-back');
-        const drawButton = document.getElementById('draw-button');
-        const endMessage = document.getElementById('end-message');
+      <button id="flipBtn"
+              class="tap-target soft-transition rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 px-4 py-3 font-medium shadow-sm border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
+              type="button">
+        뒤집기
+      </button>
 
-        const questions = [
-            "당신을 표현하는 동물과 색깔을 말해주세요!",
-            "당신의 가족을 소개해 주세요.",
-            "최근 가장 맛있게 먹었던 음식(혹은 음식을 먹은 장소)이 있나요?",
-            "하루 중 가장 좋아하는 시간대는?",
-            "어떻게 여가, 혹은 남는 시간을 보내나요?",
-            "지금 당신의 최대 관심사는 무엇인가요?",
-            "당신의 재능을 설명해주세요. 또, 그 중 가장 마음에 드는 것은 무엇인가요?",
-            "가장 아끼는 물건은 무엇인가요? 그 이유는?",
-            "최근 가장 감사했거나 기분 좋았던 일에 대해 나눠주세요.",
-            "삶에서 당신에게 가장 좋은 영향력을 미친 사람이 있었다면? 어떤 영향을 받았나요?",
-            "지금까지 받았던 선물 중 가장 의미있는 선물은 무엇인가요?",
-            "흑역사 하나를 나눠주세요! ㅋㅋ",
-            "당신의 성격 중 자랑할 만한 점에 대해 나눠주세요.",
-            "죽기 전에 꼭 해보고 싶은 일이 있다면?",
-            "최근 하나님에 대해 새롭게 알게 된 점이 있나요?",
-            "최근 특별히 짜증나거나 스트레스를 받았던 일이 있나요? 어떻게 스트레스를 푸나요?",
-            "최근 당신에게 일어난 변화에 대해 이야기해주세요.",
-            "삶에서 가장 의미있는 도전이나, 뿌듯했던 경험이 있다면?",
-            "최근 하나님께서 일하시거나, 말씀하시는 것을 느낀 적이 있나요?",
-            "가장 존경하는 사람, 혹은 닮고 싶은 사람에 대해 나눠주세요. (책에서 만난 인물이어도 좋습니다)",
-            "최근 뭔가 처음으로 시도한 일이 있나요? 어떤 계기로 시도하게 되었나요?",
-            "지극히 사랑하는 사람에 대해 나눠주세요.",
-            "당신을 힘들게 하는 것이 있다면?",
-            "하나님은 당신에게 어떤 분이신가요? 언제부터 당신에게 의미 있는 분이 되셨나요?",
-            "가족 안에서 당신은 어떤 사람인가요? 당신에게 가족은 어떤 사람들인가요?",
-            "가장 사랑하기, 혹은 용서하기 힘들었던 사람에 대해 이야기해주세요.",
-            "삶에서 가장 따듯한 기억은?",
-            "삶에서 가장 차가운 기억은?",
-            "타협하고 싶지 않은 당신만의 소중한 가치가 있다면?",
-            "삶의 터닝포인트가 있다면?",
-            "하나님과 가진 특별한 기억, 은혜, 추억에 대해 나눠줄 수 있나요?",
-            "하나님과 가장 깊이있게 만난 순간에 대해 나눠주세요.",
-            "하나님이 당신에게 주신 비전이 있다면? 직업이 아니어도 좋습니다.",
-            "그것 외에, 그대에게 이것이 궁금합니다."
-        ];
+      <button id="copyBtn"
+              class="tap-target soft-transition rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 px-4 py-3 font-medium shadow-sm border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
+              type="button">
+        질문 복사
+      </button>
 
-        let shuffledQuestions = [];
-        let currentQuestionIndex = -1;
+      <span id="hint" class="text-sm text-slate-500 ml-auto">
+        남은 카드 <span id="remaining">0</span>장
+      </span>
+    </div>
 
-        // 질문 배열을 섞는 함수
-        function shuffleQuestions() {
-            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
-            currentQuestionIndex = -1;
-            drawButton.textContent = '질문 뽑기';
-            endMessage.classList.add('hidden');
-            cardArea.classList.add('invisible');
-        }
+    <p id="endMsg" class="mt-6 hidden text-center text-slate-600">
+      모든 질문을 다 뽑았어요! <span class="font-medium">다시 섞기</span>를 눌러 새로 시작하세요.
+    </p>
+  </main>
 
-        // 카드 뒤집기 이벤트
-        card.addEventListener('click', () => {
-            if (currentQuestionIndex > -1) {
-                card.classList.toggle('is-flipped');
-            }
-        });
+  <!-- 1) 질문 데이터: 반드시 먼저 로드 -->
+  <script src="./questions.js"></script>
 
-        // 카드 뽑기 이벤트
-        drawButton.addEventListener('click', () => {
-            // 현재 카드가 뒤집혀 있다면 다시 앞으로 돌립니다.
-            if (card.classList.contains('is-flipped')) {
-                card.classList.remove('is-flipped');
-                // 텍스트가 바뀌는 것을 감추기 위해 약간의 딜레이를 줍니다.
-                setTimeout(drawNewCard, 300);
-            } else {
-                drawNewCard();
-            }
-        });
+  <!-- 2) 앱 스크립트 -->
+  <script>
+    // --- 데이터 (questions.js에서 주입) ---
+    const questions = Array.isArray(window.QUESTIONS) ? window.QUESTIONS : [];
+    // --- 상태 ---
+    let deck = [];
+    let idx = -1;
 
-        function drawNewCard() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex >= shuffledQuestions.length) {
-                // 모든 카드를 다 뽑았을 경우
-                cardArea.classList.add('invisible');
-                endMessage.classList.remove('hidden');
-                drawButton.textContent = '다시 뽑기';
-                currentQuestionIndex = -1; // 리셋을 위해 -1로 설정
-                shuffledQuestions = []; // 배열 비우기
-                return;
-            }
+    // --- 엘리먼트 ---
+    const card = document.getElementById('card');
+    const questionText = document.getElementById('questionText');
+    const drawBtn = document.getElementById('drawBtn');
+    const flipBtn = document.getElementById('flipBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const counter = document.getElementById('counter');
+    const remaining = document.getElementById('remaining');
+    const progress = document.getElementById('progress');
+    const endMsg = document.getElementById('endMsg');
 
-            // 새 게임 시작 시
-            if (shuffledQuestions.length === 0) {
-                shuffleQuestions();
-                currentQuestionIndex = 0; // 다시 뽑기 후 첫 인덱스
-            }
-            
-            cardArea.classList.remove('invisible');
-            endMessage.classList.add('hidden');
+    // --- 유틸 ---
+    const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
-            cardBack.textContent = shuffledQuestions[currentQuestionIndex];
-            drawButton.textContent = '다음 카드 뽑기';
-        }
+    function updateHUD() {
+      const total = deck.length;
+      const current = Math.min(Math.max(idx, 0), total);
+      counter.textContent = `${Math.min(current, total)} / ${total}`;
+      remaining.textContent = Math.max(total - current, 0);
+      const ratio = total ? Math.min(current / total, 1) : 0;
+      progress.style.width = `${ratio * 100}%`;
+    }
 
-        // 페이지 로드 시 초기화
-        shuffleQuestions();
+    function setFront() {
+      card.classList.remove('is-flipped');
+      card.setAttribute('aria-pressed', 'false');
+    }
+    function setBack() {
+      card.classList.add('is-flipped');
+      card.setAttribute('aria-pressed', 'true');
+    }
 
-    </script>
+    function resetDeck() {
+      deck = shuffle(questions);
+      idx = -1;
+      setFront();
+      questionText.textContent = "질문을 뽑아 주세요!";
+      endMsg.classList.add('hidden');
+      drawBtn.textContent = '질문 뽑기';
+      updateHUD();
+    }
+
+    function drawNext() {
+      if (!card.classList.contains('is-flipped')) setBack();
+
+      idx++;
+      if (idx >= deck.length) {
+        endMsg.classList.remove('hidden');
+        drawBtn.textContent = '처음부터 다시';
+        idx = deck.length;
+        updateHUD();
+        return;
+      }
+      questionText.textContent = deck[idx];
+      drawBtn.textContent = '다음 질문 뽑기';
+      updateHUD();
+    }
+
+    // --- 이벤트 ---
+    card.addEventListener('click', () => {
+      card.classList.toggle('is-flipped');
+      const flipped = card.classList.contains('is-flipped');
+      card.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+    });
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { card.click(); }
+    });
+
+    drawBtn.addEventListener('click', () => {
+      if (!card.classList.contains('is-flipped')) {
+        setBack();
+        setTimeout(drawNext, 120);
+      } else {
+        drawNext();
+      }
+    });
+
+    flipBtn.addEventListener('click', () => card.click());
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(questionText.textContent.trim());
+        copyBtn.textContent = '복사됨!';
+        setTimeout(() => (copyBtn.textContent = '질문 복사'), 1200);
+      } catch {
+        alert('복사에 실패했어요. 브라우저 설정을 확인해 주세요.');
+      }
+    });
+
+    resetBtn.addEventListener('click', resetDeck);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.closest('input, textarea, button')) return;
+      if (e.code === 'Space' && !e.shiftKey) { e.preventDefault(); drawBtn.click(); }
+      if ((e.code === 'Space' && e.shiftKey) || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault(); card.click();
+      }
+      if (e.key.toLowerCase() === 'r') resetDeck();
+    });
+
+    // 초기화
+    resetDeck();
+  </script>
 </body>
 </html>
-
