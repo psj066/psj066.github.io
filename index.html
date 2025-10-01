@@ -1,552 +1,184 @@
-<!DOCTYPE HTML>
-<!--
-	Highlights by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Welcome to Seongju's website</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css2?family=Dongle&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025-2 포공 CCC 순대 질문 뽑기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f0f4f8; /* 배경색 변경 */
+        }
+        /* 카드 컨테이너에 perspective를 추가하여 3D 효과를 줍니다. */
+        .card-container {
+            perspective: 1000px;
+        }
+        /* 카드 플립 애니메이션을 위한 스타일 */
+        .card {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 그라데이션 변경 */
+            color: white;
+        }
+        .card-back {
+            background-color: #ffffff;
+            color: #333;
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
 
-		<!-- Header -->
-			<section id="header">
-				<header class="major">
-					<h1>Seongju Park</h1>
-					<p>A record of the brightest and most brilliant period</br>Unfortunately... it's still under construction, so please understand if something is missing.</br>Feel free to take a look and contact me anytime. Thank you!</p>
-				</header>
-				<div class="container">
-					<ul class="actions special">
-						<li><a href="#one" class="button primary scrolly">Begin</a></li>
-					</ul>
-				</div>
-			</section>
+    <div class="text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">2025-2 포공 CCC 순대 질문 뽑기</h1>
+        <p class="text-gray-600 px-2">카드를 눌러 질문을 확인하고, 다음 카드를 뽑아주세요!</p>
+    </div>
 
-		<!-- One -->
-			<section id="one" class="main special">
-				<div class="container">
-					<span class="image fit primary"><img src="images/pic01_self.jpg" alt="" /></span>
-					<div class="content">
-						<header class="major">
-							<h2>Who I am</h2>
-						</header>
-						<ul class="mini">
-							<li>Graduated from <b>Pungsan High School, Andong, South Korea</b></li>
-							<li>Currently employed at <b>Pohang University of Science and Technology (POSTECH), Pohang, South Korea</b></li>
-							<li>Participated in Postech <b>Computer Vision Lab</b> Study, Summer Semester 2024</li>
-							<li>Currently interning at Postech<b> Human-centered Intelligent Systems Lab</b>, Winter Semester 2024</li>
-							<li>Participating in <b>POSTECH BREMEN</b> since 2023</li>
-							<li>Participating in <b>POSTECH CCC</b> since 2023</li>
-							<!-- <li>Recipient of Yangyoung Foundation Scholarship since 2024-2</li> -->
-							<p><br>... more personally ...</p>
-							<li>I love eating, especially <b>Korean food</b>.</li>
-							<li>I enjoy taking walks <b>while listening to music and watching the stars.</b></li>
-							<li>Once I become interested in something, I can't easily get out of it.</li>
-							<li>I like people and enjoy building <b>close relationships</b>.</li>
-							<li>My MBTI is <b>ENFP</b>.</li>
-						</ul>
-					</div>
-					<a href="#two" class="goto-next scrolly">Next</a>
-				</div>
-			</section>
+    <!-- 카드 영역 -->
+    <div id="card-area" class="card-container w-full max-w-lg h-80 mb-8 invisible">
+        <div id="card" class="card w-full h-full">
+            <div class="card-face card-front text-2xl sm:text-3xl font-bold text-center px-4">
+                질문 카드 🧐
+            </div>
+            <div id="card-back" class="card-face card-back font-semibold text-lg md:text-xl leading-relaxed text-center">
+                <!-- 질문 내용이 여기에 들어갑니다. -->
+            </div>
+        </div>
+    </div>
 
-		<!-- Two -->
-			<section id="two" class="main special">
-				<div class="container">
-					<span class="image fit primary"><img src="images/instance_4.jpg" alt="" /></span>
-					<div class="content">
-						<header class="major">
-							<h2>Contact Ways</h2>
-						</header>
-						<p>Here are a few ways to contact me. I prefer email the most, but Instagram works well too!</p>
-						<ul class="icons-grid">
-							<li>
-								<span class="icon solid major fa-envelope"></span>
-								<h3>Email</h3>
-								<p><b>psj066@postech.ac.kr</b></p>
-							</li>
-							<li>
-								<span class="icon solid major brands fa-instagram"></span>
-								<h3>Instagram</h3>
-								<p><b>@to_templato_vida</b></p>
-							</li>
-							<li>
-								<span class="icon solid major brands fa-github"></span>
-								<h3>Git</h3>
-								<p><a href="https://github.com/psj066"><b>psj066</b></a></p>
-							</li>
-							<li>
-								<span class="icon solid major fa-phone"></span>
-								<h3>Tel</h3>
-								<p><b><u>010-6866-0306</u></b></p>
-							</li>
-						</ul>
-					</div>
-					<a href="#three" class="goto-next scrolly">Next</a>
-				</div>
-			</section>
+    <!-- 버튼 영역 -->
+    <button id="draw-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105">
+        질문 뽑기
+    </button>
+    
+    <p id="end-message" class="text-gray-500 mt-8 hidden">모든 질문을 다 뽑았습니다! 처음으로 돌아가려면 '다시 뽑기'를 눌러주세요.</p>
 
-		<!-- Three -->
-			<section id="three" class="main special">
-				<div class="container">
-					<span class="image fit primary"><img src="images/instance_3.jpg" alt="" /></span>
-					<div class="content">
-						<header class="major">
-							<h2>Photos</h2>
-						</header>
-						<p>Here, I’m keeping a collection of my favorite photos.</br>Feel free to take a look if you’d like!</br>Hmm... actually, the photos might be a bit overwhelming.</p>
-					
-					<div class="background">
-						<div class="slider-container">
-							<div class="slider">
-								<div class="slide"><img src="images/favorites/image1.jpg" alt="Image 1"></div>
-								<div class="slide"><img src="images/favorites/image2.jpg" alt="Image 2"></div>
-								<div class="slide"><img src="images/favorites/image3.jpg" alt="Image 3"></div>
-								<div class="slide"><img src="images/favorites/image4.jpg" alt="Image 4"></div>
-								<div class="slide"><img src="images/favorites/image5.jpg" alt="Image 5"></div>
-								<div class="slide"><img src="images/favorites/image6.jpg" alt="Image 6"></div>
-								<div class="slide"><img src="images/favorites/image7.jpg" alt="Image 7"></div>
-								<div class="slide"><img src="images/favorites/image8.jpg" alt="Image 8"></div>
-								<div class="slide"><img src="images/favorites/image9.jpg" alt="Image 9"></div>
-								<div class="slide"><img src="images/favorites/image10.jpg" alt="Image 10"></div>
-								<div class="slide"><img src="images/favorites/image11.jpg" alt="Image 11"></div>
-								<div class="slide"><img src="images/favorites/image12.jpg" alt="Image 12"></div>
-								<div class="slide"><img src="images/favorites/image13.jpg" alt="Image 13"></div>
-								<div class="slide"><img src="images/favorites/image14.jpg" alt="Image 14"></div>
-								<div class="slide"><img src="images/favorites/image15.jpg" alt="Image 15"></div>
-								<div class="slide"><img src="images/favorites/image16.jpg" alt="Image 16"></div>
-								<div class="slide"><img src="images/favorites/image17.jpg" alt="Image 17"></div>
-								<div class="slide"><img src="images/favorites/image18.jpg" alt="Image 18"></div>
-								<div class="slide"><img src="images/favorites/image19.jpg" alt="Image 19"></div>
-								<div class="slide"><img src="images/favorites/image20.jpg" alt="Image 20"></div>
-								<div class="slide"><img src="images/favorites/image21.jpg" alt="Image 21"></div>
-								<div class="slide"><img src="images/favorites/image22.jpg" alt="Image 22"></div>
-								<div class="slide"><img src="images/favorites/image23.jpg" alt="Image 23"></div>
-								<div class="slide"><img src="images/favorites/image24.jpg" alt="Image 24"></div>
-								<div class="slide"><img src="images/favorites/image25.jpg" alt="Image 25"></div>
-								<div class="slide"><img src="images/favorites/image26.jpg" alt="Image 26"></div>
-								<div class="slide"><img src="images/favorites/image27.jpg" alt="Image 27"></div>
-								<div class="slide"><img src="images/favorites/image28.jpg" alt="Image 28"></div>
-								<div class="slide"><img src="images/favorites/image29.jpg" alt="Image 29"></div>
-								<div class="slide"><img src="images/favorites/image30.jpg" alt="Image 30"></div>
-								<div class="slide"><img src="images/favorites/image31.jpg" alt="Image 31"></div>
+    <script>
+        const card = document.getElementById('card');
+        const cardArea = document.getElementById('card-area');
+        const cardBack = document.getElementById('card-back');
+        const drawButton = document.getElementById('draw-button');
+        const endMessage = document.getElementById('end-message');
 
-							</div>
-							<button class="prev">&#10094;</button>
-							<button class="next">&#10095;</button>
-						</div>
-						<div class="dots-container">
-							<span class="dot" data-index="0"></span>
-							<span class="dot" data-index="1"></span>
-							<span class="dot" data-index="2"></span>
-							<span class="dot" data-index="3"></span>
-							<span class="dot" data-index="4"></span>
-							<span class="dot" data-index="5"></span>
-						</div>
-					</div>
-					<a href="#four" class="goto-next scrolly">Next</a>
-				</div>
-				</div>
-			</section>
+        const questions = [
+            "당신을 표현하는 동물과 색깔을 말해주세요!",
+            "당신의 가족을 소개해 주세요.",
+            "최근 가장 맛있게 먹었던 음식(혹은 음식을 먹은 장소)이 있나요?",
+            "하루 중 가장 좋아하는 시간대는?",
+            "어떻게 여가, 혹은 남는 시간을 보내나요?",
+            "지금 당신의 최대 관심사는 무엇인가요?",
+            "당신의 재능을 설명해주세요. 또, 그 중 가장 마음에 드는 것은 무엇인가요?",
+            "가장 아끼는 물건은 무엇인가요? 그 이유는?",
+            "최근 가장 감사했거나 기분 좋았던 일에 대해 나눠주세요.",
+            "삶에서 당신에게 가장 좋은 영향력을 미친 사람이 있었다면? 어떤 영향을 받았나요?",
+            "지금까지 받았던 선물 중 가장 의미있는 선물은 무엇인가요?",
+            "흑역사 하나를 나눠주세요! ㅋㅋ",
+            "당신의 성격 중 자랑할 만한 점에 대해 나눠주세요.",
+            "죽기 전에 꼭 해보고 싶은 일이 있다면?",
+            "최근 하나님에 대해 새롭게 알게 된 점이 있나요?",
+            "최근 특별히 짜증나거나 스트레스를 받았던 일이 있나요? 어떻게 스트레스를 푸나요?",
+            "최근 당신에게 일어난 변화에 대해 이야기해주세요.",
+            "삶에서 가장 의미있는 도전이나, 뿌듯했던 경험이 있다면?",
+            "최근 하나님께서 일하시거나, 말씀하시는 것을 느낀 적이 있나요?",
+            "가장 존경하는 사람, 혹은 닮고 싶은 사람에 대해 나눠주세요. (책에서 만난 인물이어도 좋습니다)",
+            "최근 뭔가 처음으로 시도한 일이 있나요? 어떤 계기로 시도하게 되었나요?",
+            "지극히 사랑하는 사람에 대해 나눠주세요.",
+            "당신을 힘들게 하는 것이 있다면?",
+            "하나님은 당신에게 어떤 분이신가요? 언제부터 당신에게 의미 있는 분이 되셨나요?",
+            "가족 안에서 당신은 어떤 사람인가요? 당신에게 가족은 어떤 사람들인가요?",
+            "가장 사랑하기, 혹은 용서하기 힘들었던 사람에 대해 이야기해주세요.",
+            "삶에서 가장 따듯한 기억은?",
+            "삶에서 가장 차가운 기억은?",
+            "타협하고 싶지 않은 당신만의 소중한 가치가 있다면?",
+            "삶의 터닝포인트가 있다면?",
+            "하나님과 가진 특별한 기억, 은혜, 추억에 대해 나눠줄 수 있나요?",
+            "하나님과 가장 깊이있게 만난 순간에 대해 나눠주세요.",
+            "하나님이 당신에게 주신 비전이 있다면? 직업이 아니어도 좋습니다.",
+            "그것 외에, 그대에게 이것이 궁금합니다."
+        ];
 
-		<!-- Four -->
-			<section id="four" class="main special">
-				<div class="container">
-					<span class="image fit primary"><img src="images/instance_6.jpg" alt="" /></span>
-					<div class="content">
-						<header class="major">
-							<h2>My TMI</h2>
-						</header>
-						<p>Here, you'll find some information about me that you might not be interested in. It's probably not very useful, so feel free to leave if you'd like, haha.</p>
-						<ul class = "mini">
-							<li>I was reading a paper, but got bored, so I ended up creating a self-introduction website in just one day.</li>
-							<li>I only seem to have photos of me hanging out, and I feel like people might think I’m always playing around, which is unfair.</li>
-							<li>Once it’s done, I’m going to brag about it to my parents.</li>
-							<li>I’ll probably share it on Instagram or other social media.</li>
-							<li>I love playing games. Lately, I’ve been really into the Pokémon Trading Card Game Pocket.</li>
-							<li>I enjoy exploring good restaurants and marking them on a map as I go.</li>
-							<li>I don’t like making plans because I can never stick to them.</li>
-							<li>I joined the band to play bass, but somehow ended up in the guitar section, and now I’m even the president of the club.</li>
-							<li>I always tell myself I won’t take on anything new, but before I know it, I’m handling a bunch of different things. Turns out, I might be a workaholic.</li>
-							<li>I'm not that good at English, so I used ChatGPT for translation.</li>
-							<li>I have a seminar presentation this Friday.</li>
-						</ul>
-					</div>
-					<a href="#footer" class="goto-next scrolly">Next</a>
-				</div>
-			</section>
+        let shuffledQuestions = [];
+        let currentQuestionIndex = -1;
 
-			<!-- <section id="five" class="main">
-				<div class="container">
-					<span class="image fit primary"><img src="images/instance_6.jpg" alt="" /></span>
-					<div class="content">
-						<header class="major">
-							<h2>Elements</h2>
-						</header>
-						<section>
-							<h4>Text</h4>
-							<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
-							This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
-							This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
-							<hr />
-							<header>
-								<h4>Heading with a Subtitle</h4>
-								<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
-							</header>
-							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
-							<header>
-								<h5>Heading with a Subtitle</h5>
-								<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
-							</header>
-							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing blandit tempus accumsan.</p>
-							<hr />
-							<h2>Heading Level 2</h2>
-							<h3>Heading Level 3</h3>
-							<h4>Heading Level 4</h4>
-							<h5>Heading Level 5</h5>
-							<h6>Heading Level 6</h6>
-							<hr />
-							<h5>Blockquote</h5>
-							<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
-							<h5>Preformatted</h5>
-							<pre><code>i = 0;
+        // 질문 배열을 섞는 함수
+        function shuffleQuestions() {
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            currentQuestionIndex = -1;
+            drawButton.textContent = '질문 뽑기';
+            endMessage.classList.add('hidden');
+            cardArea.classList.add('invisible');
+        }
 
-	while (!deck.isInOrder()) {
-	print 'Iteration ' + i;
-	deck.shuffle();
-	i++;
-	}
+        // 카드 뒤집기 이벤트
+        card.addEventListener('click', () => {
+            if (currentQuestionIndex > -1) {
+                card.classList.toggle('is-flipped');
+            }
+        });
 
-	print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
-						</section>
+        // 카드 뽑기 이벤트
+        drawButton.addEventListener('click', () => {
+            // 현재 카드가 뒤집혀 있다면 다시 앞으로 돌립니다.
+            if (card.classList.contains('is-flipped')) {
+                card.classList.remove('is-flipped');
+                // 텍스트가 바뀌는 것을 감추기 위해 약간의 딜레이를 줍니다.
+                setTimeout(drawNewCard, 300);
+            } else {
+                drawNewCard();
+            }
+        });
 
-						<section>
-							<h4>Lists</h4>
-							<div class="row">
-								<div class="col-6 col-12-medium">
-									<h5>Unordered</h5>
-									<ul>
-										<li>Dolor pulvinar etiam.</li>
-										<li>Sagittis adipiscing.</li>
-										<li>Felis enim feugiat.</li>
-									</ul>
-									<h5>Alternate</h5>
-									<ul class="alt">
-										<li>Dolor pulvinar etiam.</li>
-										<li>Sagittis adipiscing.</li>
-										<li>Felis enim feugiat.</li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-medium">
-									<h5>Ordered</h5>
-									<ol>
-										<li>Dolor pulvinar etiam.</li>
-										<li>Etiam vel felis viverra.</li>
-										<li>Felis enim feugiat.</li>
-										<li>Dolor pulvinar etiam.</li>
-										<li>Etiam vel felis lorem.</li>
-										<li>Felis enim et feugiat.</li>
-									</ol>
-									<h5>Icons</h5>
-									<ul class="icons">
-										<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-										<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-										<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-										<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-									</ul>
-								</div>
-							</div>
-							<h5>Actions</h5>
-							<ul class="actions">
-								<li><a href="#" class="button primary">Default</a></li>
-								<li><a href="#" class="button">Default</a></li>
-							</ul>
-							<ul class="actions small">
-								<li><a href="#" class="button primary small">Small</a></li>
-								<li><a href="#" class="button small">Small</a></li>
-							</ul>
-							<div class="row">
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary">Default</a></li>
-										<li><a href="#" class="button">Default</a></li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary small">Small</a></li>
-										<li><a href="#" class="button small">Small</a></li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary fit">Default</a></li>
-										<li><a href="#" class="button fit">Default</a></li>
-									</ul>
-								</div>
-								<div class="col-6 col-12-small">
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary small fit">Small</a></li>
-										<li><a href="#" class="button small fit">Small</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
+        function drawNewCard() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                // 모든 카드를 다 뽑았을 경우
+                cardArea.classList.add('invisible');
+                endMessage.classList.remove('hidden');
+                drawButton.textContent = '다시 뽑기';
+                currentQuestionIndex = -1; // 리셋을 위해 -1로 설정
+                shuffledQuestions = []; // 배열 비우기
+                return;
+            }
 
-						<section>
-							<h4>Table</h4>
-							<h5>Default</h5>
-							<div class="table-wrapper">
-								<table>
-									<thead>
-										<tr>
-											<th>Name</th>
-											<th>Description</th>
-											<th>Price</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Item One</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Two</td>
-											<td>Vis ac commodo adipiscing arcu aliquet.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Three</td>
-											<td> Morbi faucibus arcu accumsan lorem.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Four</td>
-											<td>Vitae integer tempus condimentum.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Five</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<tr>
-											<td colspan="2"></td>
-											<td>100.00</td>
-										</tr>
-									</tfoot>
-								</table>
-							</div>
+            // 새 게임 시작 시
+            if (shuffledQuestions.length === 0) {
+                shuffleQuestions();
+                currentQuestionIndex = 0; // 다시 뽑기 후 첫 인덱스
+            }
+            
+            cardArea.classList.remove('invisible');
+            endMessage.classList.add('hidden');
 
-							<h5>Alternate</h5>
-							<div class="table-wrapper">
-								<table class="alt">
-									<thead>
-										<tr>
-											<th>Name</th>
-											<th>Description</th>
-											<th>Price</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>Item One</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Two</td>
-											<td>Vis ac commodo adipiscing arcu aliquet.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Three</td>
-											<td> Morbi faucibus arcu accumsan lorem.</td>
-											<td>29.99</td>
-										</tr>
-										<tr>
-											<td>Item Four</td>
-											<td>Vitae integer tempus condimentum.</td>
-											<td>19.99</td>
-										</tr>
-										<tr>
-											<td>Item Five</td>
-											<td>Ante turpis integer aliquet porttitor.</td>
-											<td>29.99</td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<tr>
-											<td colspan="2"></td>
-											<td>100.00</td>
-										</tr>
-									</tfoot>
-								</table>
-							</div>
-						</section>
+            cardBack.textContent = shuffledQuestions[currentQuestionIndex];
+            drawButton.textContent = '다음 카드 뽑기';
+        }
 
-						<section>
-							<h4>Buttons</h4>
-							<ul class="actions">
-								<li><a href="#" class="button primary">Primary</a></li>
-								<li><a href="#" class="button">Default</a></li>
-							</ul>
-							<ul class="actions">
-								<li><a href="#" class="button">Default</a></li>
-								<li><a href="#" class="button small">Small</a></li>
-							</ul>
-							<ul class="actions fit">
-								<li><a href="#" class="button primary fit">Fit</a></li>
-								<li><a href="#" class="button fit">Fit</a></li>
-							</ul>
-							<ul class="actions fit small">
-								<li><a href="#" class="button primary fit small">Fit + Small</a></li>
-								<li><a href="#" class="button fit small">Fit + Small</a></li>
-							</ul>
-							<ul class="actions">
-								<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
-								<li><a href="#" class="button icon solid fa-download">Icon</a></li>
-							</ul>
-							<ul class="actions">
-								<li><span class="button primary disabled">Disabled</span></li>
-								<li><span class="button disabled">Disabled</span></li>
-							</ul>
-						</section>
+        // 페이지 로드 시 초기화
+        shuffleQuestions();
 
-						<section>
-							<h4>Form</h4>
-							<form method="post" action="#">
-								<div class="row gtr-uniform">
-									<div class="col-6 col-12-xsmall">
-										<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
-									</div>
-									<div class="col-6 col-12-xsmall">
-										<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
-									</div>
-									<div class="col-12">
-										<select name="demo-category" id="demo-category">
-											<option value="">- Category -</option>
-											<option value="1">Manufacturing</option>
-											<option value="1">Shipping</option>
-											<option value="1">Administration</option>
-											<option value="1">Human Resources</option>
-										</select>
-									</div>
-									<div class="col-4 col-12-small">
-										<input type="radio" id="demo-priority-low" name="demo-priority" checked>
-										<label for="demo-priority-low">Low</label>
-									</div>
-									<div class="col-4 col-12-small">
-										<input type="radio" id="demo-priority-normal" name="demo-priority">
-										<label for="demo-priority-normal">Normal</label>
-									</div>
-									<div class="col-4 col-12-small">
-										<input type="radio" id="demo-priority-high" name="demo-priority">
-										<label for="demo-priority-high">High</label>
-									</div>
-									<div class="col-6 col-12-small">
-										<input type="checkbox" id="demo-copy" name="demo-copy">
-										<label for="demo-copy">Email me a copy</label>
-									</div>
-									<div class="col-6 col-12-small">
-										<input type="checkbox" id="demo-human" name="demo-human" checked>
-										<label for="demo-human">Not a robot</label>
-									</div>
-									<div class="col-12">
-										<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
-									</div>
-									<div class="col-12">
-										<ul class="actions">
-											<li><input type="submit" value="Send Message" class="primary" /></li>
-											<li><input type="reset" value="Reset" /></li>
-										</ul>
-									</div>
-								</div>
-							</form>
-						</section>
-
-						<section>
-							<h4>Image</h4>
-							<h5>Fit</h5>
-							<div class="box alt">
-								<div class="row gtr-uniform gtr-50">
-									<div class="col-12"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-									<div class="col-4"><span class="image fit"><img src="images/pic04.jpg" alt="" /></span></div>
-								</div>
-							</div>
-							<h5>Left &amp; Right</h5>
-							<p><span class="image left"><img src="images/pic05.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
-							<p><span class="image right"><img src="images/pic05.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent.</p>
-						</section>
-
-					</div>
-					<a href="#footer" class="goto-next scrolly">Next</a>
-				</div>
-			</section>
-		 -->
-
-		<!-- Footer -->
-			<section id="footer">
-				<div class="container">
-					<header class="major">
-						<h2>Get in touch</h2>
-						<p>Please leave a short message in the guestbook! It will be automatically sent to my email!</p>
-					</header>
-					<form method="post" action="https://formspree.io/f/mdkkpjjp">
-						<div class="row gtr-uniform">
-							<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" /></div>
-							<div class="col-6 col-12-xsmall"><input type="relation" name="relation" id="relation" placeholder="Relation" /></div>
-							<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
-							<div class="col-12">
-								<ul class="actions special">
-									<li><input type="submit" value="Send Message" class="primary" /></li>
-								</ul>
-							</div>
-						</div>
-					</form>
-				</div>
-				<footer>
-					<!-- <ul class="icons">
-						<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
-						<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
-						<li><a href="#" class="icon brands alt fa-dribbble"><span class="label">Dribbble</span></a></li>
-						<li><a href="#" class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
-					</ul> -->
-					<ul class="copyright">
-						<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li><li>Demo Images: <a href="http://unsplash.com">Unsplash</a></li>
-					</ul>
-				</footer>
-			</section>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-			<script src="assets/js/slider.js"></script>
-
-	</body>
+    </script>
+</body>
 </html>
+
