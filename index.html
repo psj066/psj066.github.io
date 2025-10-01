@@ -3,51 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>2025-2 포공 CCC 순대 질문 뽑기 — 새 디자인</title>
+  <title>2025-2 포공 CCC 순대 질문 뽑기 — 스와이프 버전</title>
 
   <!-- Pretendard -->
   <link rel="stylesheet" as="style" crossorigin
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
-  <!-- Tailwind CDN -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    :root {
-      --card-radius: 1.25rem;
-      --shadow-soft: 0 10px 30px rgba(15, 23, 42, .10);
-      --easing: cubic-bezier(.2, 0, .38, .9);
-      --flip-ms: 500ms;
+    :root{
+      --card-radius:1.25rem;
+      --shadow-soft:0 12px 40px rgba(15,23,42,.12);
+      --easing:cubic-bezier(.2,0,.38,.9);
+      --flip-ms:420ms;
     }
-    body { font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR', sans-serif; }
+    body{font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans KR',sans-serif}
 
-    .card-3d { perspective: 1200px; }
-    .card {
-      position: relative; transform-style: preserve-3d;
-      transition: transform var(--flip-ms) var(--easing);
-      border-radius: var(--card-radius); box-shadow: var(--shadow-soft);
-      cursor: pointer;
+    /* 카드 스택 */
+    .stack{
+      position:relative;
+      perspective:1200px;
+      user-select:none;
     }
-    .card.is-flipped { transform: rotateY(180deg); }
-
-    .card-face {
-      position: absolute; inset: 0; display: grid; place-items: center;
-      padding: 1.5rem; border-radius: inherit;
-      backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    }
-    .card-front {
-      background: radial-gradient(120% 120% at 0% 0%, #a78bfa 0%, #6366f1 45%, #4338ca 100%);
-      color: white;
-    }
-    .card-back { background: white; color: #0f172a; transform: rotateY(180deg); }
-
-    @media (prefers-reduced-motion: reduce) {
-      .card { transition: opacity 200ms ease; transform: none !important; }
-      .card.is-flipped { opacity: 1; }
-      .card-front, .card-back { transform: none !important; }
+    .card{
+      position:absolute; inset:0;
+      display:grid; place-items:center;
+      border-radius:var(--card-radius);
+      box-shadow:var(--shadow-soft);
+      background:white;
+      overflow:hidden;
+      will-change:transform,opacity;
+      transition:transform var(--flip-ms) var(--easing), opacity 220ms var(--easing);
+      touch-action:none; /* PointerEvent 드래그 위해 */
     }
 
-    .tap-target { min-height: 48px; }
-    .soft-transition { transition: all 180ms var(--easing); }
+    /* 역할 기반 z-index */
+    .card.top { z-index: 2; }
+    .card.back { z-index: 1; }
+
+    /* 기본은 흰 카드만 보이게 */
+    .card .card-bg { display: none; }
+    /* 안내(처음) 상태에서만 보라색 배경 노출 */
+    .card.instruction .card-bg { display: block; }
+
+    .card-bg{
+      position:absolute; inset:0;
+      background: radial-gradient(120% 120% at 0% 0%,
+                  #a78bfa 0%, #6366f1 45%, #4338ca 100%);
+    }
+    .card-content{
+      position:relative; z-index:1;
+      padding:1.5rem;
+      text-align:center;
+      color:#0f172a;
+    }
+    .card.instruction .card-content{
+      color:white;
+    }
+    .hidden-card{
+      opacity:0; pointer-events:none;
+    }
+
+    /* 스와이프 중 회전 살짝 */
+    .dragging{
+      transition:none !important;
+      cursor:grabbing;
+    }
+
+    /* 날아가는 애니메이션(방향별) */
+    .fly-left{ transform: translateX(-130vw) rotate(-24deg) !important; opacity:0 !important; }
+    .fly-right{ transform: translateX(130vw) rotate(24deg) !important; opacity:0 !important; }
+
+    /* 진행바 */
+    .bar{ height:.5rem; background:#e2e8f0; border-radius:9999px; overflow:hidden; }
+    .bar>span{ display:block; height:100%; background:#6366f1; width:0%; transition:width 200ms var(--easing); }
+
+    /* 접근성: 모션 민감 */
+    @media (prefers-reduced-motion: reduce){
+      .card{ transition: opacity 160ms ease }
+      .fly-left,.fly-right{ transform:none !important; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-5 md:p-8">
@@ -58,8 +94,8 @@
       2025-2 포공 CCC 순대 질문 뽑기
     </h1>
     <p class="mt-2 text-slate-600 leading-relaxed">
-      카드를 눌러 뒤집고, <span class="font-medium text-slate-800">스페이스/엔터</span>로 다음 질문을 뽑을 수 있어요.
-      <span class="text-slate-500">(Shift+Space: 뒤집기)</span>
+      처음엔 질문이 숨겨져 있어요. 화면을 탭/클릭하면 질문이 나타납니다.
+      좌/우로 스와이프해 카드를 넘기세요. (←/→ 키도 가능)
     </p>
   </header>
 
@@ -68,63 +104,44 @@
     <div class="flex items-center justify-between text-sm text-slate-600">
       <div id="counter" class="font-medium">0 / 0</div>
       <button id="resetBtn"
-              class="tap-target soft-transition px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-              type="button" aria-label="다시 섞기">
-        다시 섞기
-      </button>
+        class="px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        type="button" aria-label="다시 섞기">다시 섞기</button>
     </div>
-    <div class="mt-2 h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-      <div id="progress" class="h-full bg-indigo-500 w-0"></div>
+    <div class="mt-2 bar rounded-full">
+      <span id="progress"></span>
     </div>
   </section>
 
-  <!-- 카드 -->
+  <!-- 카드 스택 (맨 위: .top, 아래: .back) -->
   <main class="w-full max-w-3xl">
-    <div class="card-3d w-full aspect-[3/2] sm:aspect-[5/3]">
-      <div id="card"
-           class="card w-full h-full select-none"
-           role="button" tabindex="0"
-           aria-label="질문 카드 뒤집기 (엔터 키로 뒤집기)"
-           aria-pressed="false">
-        <div class="card-face card-front">
-          <div class="text-center px-6">
-            <div class="text-3xl md:text-4xl font-bold tracking-tight drop-shadow-sm">질문 카드 🧐</div>
-            <p class="mt-3 text-white/90 md:text-lg">클릭/탭 또는 Enter로 뒤집기</p>
+    <div id="stack" class="stack w-full aspect-[3/2] sm:aspect-[5/3]">
+      <!-- Top card -->
+      <div id="cardTop" class="card instruction top select-none" role="button" tabindex="0" aria-label="카드">
+        <div class="card-bg"></div>
+        <div class="card-content max-w-2xl">
+          <div id="topText" class="text-xl md:text-2xl font-semibold leading-relaxed tracking-[-0.01em]">
+            화면을 눌러 첫 질문을 보여주세요 👇
           </div>
         </div>
-        <div class="card-face card-back">
-          <div class="max-w-2xl text-center px-6">
-            <p id="questionText"
-               class="text-xl md:text-2xl font-semibold leading-relaxed tracking-[-0.01em]"
-               aria-live="polite">
-              질문을 뽑아 주세요!
-            </p>
+      </div>
+      <!-- Back card (아래 대기) -->
+      <div id="cardNext" class="card back hidden-card select-none" aria-hidden="true">
+        <div class="card-bg" style="opacity:.06"></div>
+        <div class="card-content max-w-2xl">
+          <div id="nextText" class="text-xl md:text-2xl font-semibold leading-relaxed tracking-[-0.01em] text-slate-900">
+            <!-- 다음 질문 미리 로드 -->
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 액션 영역 -->
-    <div class="mt-6 flex flex-wrap items-center gap-3">
-      <button id="drawBtn"
-              class="tap-target soft-transition rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-5 py-3 font-semibold shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
-              type="button">
-        질문 뽑기
-      </button>
-
-      <button id="flipBtn"
-              class="tap-target soft-transition rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 px-4 py-3 font-medium shadow-sm border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
-              type="button">
-        뒤집기
-      </button>
-
+    <!-- 액션 -->
+    <div class="mt-6 flex items-center gap-3">
       <button id="copyBtn"
-              class="tap-target soft-transition rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 px-4 py-3 font-medium shadow-sm border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
-              type="button">
-        질문 복사
-      </button>
+        class="rounded-xl bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-900 px-4 py-3 font-medium shadow-sm border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400"
+        type="button">질문 복사</button>
 
-      <span id="hint" class="text-sm text-slate-500 ml-auto">
+      <span class="text-sm text-slate-500 ml-auto">
         남은 카드 <span id="remaining">0</span>장
       </span>
     </div>
@@ -134,118 +151,232 @@
     </p>
   </main>
 
-  <!-- 1) 질문 데이터: 반드시 먼저 로드 -->
+  <!-- 질문 데이터 먼저 로드 -->
   <script src="./questions.js"></script>
 
-  <!-- 2) 앱 스크립트 -->
+  <!-- 스크립트 -->
   <script>
-    // --- 데이터 (questions.js에서 주입) ---
-    const questions = Array.isArray(window.QUESTIONS) ? window.QUESTIONS : [];
-    // --- 상태 ---
+    // 데이터
+    const questions = Array.isArray(window.QUESTIONS) ? window.QUESTIONS.slice() : [];
+
+    // 상태
     let deck = [];
-    let idx = -1;
+    let idx = -1;                 // -1: 아직 첫 질문 미공개
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let curX = 0, curY = 0;
 
-    // --- 엘리먼트 ---
-    const card = document.getElementById('card');
-    const questionText = document.getElementById('questionText');
-    const drawBtn = document.getElementById('drawBtn');
-    const flipBtn = document.getElementById('flipBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const counter = document.getElementById('counter');
+    // 고정 엘리먼트(초기 DOM)
+    const stackEl     = document.getElementById('stack');
+    const cardTopEl   = document.getElementById('cardTop');
+    const topTextDom  = document.getElementById('topText');
+    const cardNextEl  = document.getElementById('cardNext');
+    const nextTextDom = document.getElementById('nextText');
+
+    // 스왑 가능한 핸들 (초기에는 고정 엘리먼트를 가리킴)
+    let topCard   = cardTopEl;
+    let backCard  = cardNextEl;
+    let topTextEl = topTextDom;
+    let backTextEl= nextTextDom;
+
+    const counter   = document.getElementById('counter');
     const remaining = document.getElementById('remaining');
-    const progress = document.getElementById('progress');
-    const endMsg = document.getElementById('endMsg');
+    const progress  = document.getElementById('progress');
+    const resetBtn  = document.getElementById('resetBtn');
+    const copyBtn   = document.getElementById('copyBtn');
+    const endMsg    = document.getElementById('endMsg');
 
-    // --- 유틸 ---
+    // 유틸
     const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
     function updateHUD() {
       const total = deck.length;
-      const current = Math.min(Math.max(idx, 0), total);
+      const current = Math.max(idx, 0);
       counter.textContent = `${Math.min(current, total)} / ${total}`;
       remaining.textContent = Math.max(total - current, 0);
       const ratio = total ? Math.min(current / total, 1) : 0;
       progress.style.width = `${ratio * 100}%`;
-    }
-
-    function setFront() {
-      card.classList.remove('is-flipped');
-      card.setAttribute('aria-pressed', 'false');
-    }
-    function setBack() {
-      card.classList.add('is-flipped');
-      card.setAttribute('aria-pressed', 'true');
+      copyBtn.disabled = (idx < 0 || idx >= deck.length);
+      copyBtn.classList.toggle('opacity-50', copyBtn.disabled);
+      copyBtn.classList.toggle('pointer-events-none', copyBtn.disabled);
     }
 
     function resetDeck() {
       deck = shuffle(questions);
       idx = -1;
-      setFront();
-      questionText.textContent = "질문을 뽑아 주세요!";
       endMsg.classList.add('hidden');
-      drawBtn.textContent = '질문 뽑기';
-      updateHUD();
-    }
 
-    function drawNext() {
-      if (!card.classList.contains('is-flipped')) setBack();
+      // 클래스 초기화: Top은 안내(보라), Back은 숨김
+      topCard.classList.add('instruction','top');
+      topCard.classList.remove('back','hidden-card','fly-left','fly-right','dragging');
+      backCard.classList.add('back','hidden-card');
+      backCard.classList.remove('top','fly-left','fly-right','dragging');
 
-      idx++;
-      if (idx >= deck.length) {
-        endMsg.classList.remove('hidden');
-        drawBtn.textContent = '처음부터 다시';
-        idx = deck.length;
+      if (deck.length === 0) {
+        topTextEl.textContent = '질문 목록이 비어 있어요. questions.js를 확인해 주세요.';
+        backTextEl.textContent = '';
         updateHUD();
         return;
       }
-      questionText.textContent = deck[idx];
-      drawBtn.textContent = '다음 질문 뽑기';
+
+      topTextEl.textContent = '화면을 눌러 첫 질문을 보여주세요 👇';
+      backTextEl.textContent = deck[0]; // 첫 질문을 아래에 예열
+      // 위치 초기화
+      topCard.style.transform = '';
+      topCard.style.opacity = '';
+
       updateHUD();
     }
 
-    // --- 이벤트 ---
-    card.addEventListener('click', () => {
-      card.classList.toggle('is-flipped');
-      const flipped = card.classList.contains('is-flipped');
-      card.setAttribute('aria-pressed', flipped ? 'true' : 'false');
-    });
+    function revealFirst() {
+      if (idx >= 0 || deck.length === 0) return;
 
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { card.click(); }
-    });
+      idx = 0;
+      topTextEl.textContent = deck[0];
+      topCard.classList.remove('instruction'); // 이제부터 흰 카드만
 
-    drawBtn.addEventListener('click', () => {
-      if (!card.classList.contains('is-flipped')) {
-        setBack();
-        setTimeout(drawNext, 120);
+      // 다음 질문 미리 채우기
+      if (deck.length > 1) {
+        backTextEl.textContent = deck[1];
+        backCard.classList.add('back','hidden-card'); // 아래는 기본 숨김
       } else {
-        drawNext();
+        backTextEl.textContent = '';
+        backCard.classList.add('hidden-card');
       }
+      updateHUD();
+    }
+
+    // 포인터 제스처
+    function onPointerDown(e){
+      // 첫 터치로 '공개 + 드래그'를 한 번에
+      if (idx < 0){
+        revealFirst();
+        // return 없이 이어서 드래그 시작
+      }
+      isDragging = true;
+      startX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+      startY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+      topCard.classList.add('dragging');
+      if (e.pointerId !== undefined) { topCard.setPointerCapture?.(e.pointerId); }
+    }
+
+    function onPointerMove(e){
+      if (!isDragging) return;
+      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? startX;
+      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? startY;
+      curX = x - startX;
+      curY = y - startY;
+
+      const rot = Math.max(Math.min(curX / 16, 24), -24);
+      topCard.style.transform = `translate(${curX}px, ${curY}px) rotate(${rot}deg)`;
+      topCard.style.opacity = `${Math.max(0.6, 1 - Math.abs(curX) / 600)}`;
+    }
+
+    function onPointerUp(){
+      if (!isDragging) return;
+      isDragging = false;
+      topCard.classList.remove('dragging');
+
+      const threshold = Math.min(window.innerWidth * 0.18, 200);
+      if (curX > threshold){
+        flyOut('right');
+      } else if (curX < -threshold){
+        flyOut('left');
+      } else {
+        topCard.style.transform = '';
+        topCard.style.opacity = '';
+      }
+      curX = curY = 0;
+    }
+
+    function flyOut(direction){
+      // 다음 카드가 있으면 미리 아래 카드를 드러내 자연스러운 노출
+      const nextIdx = idx + 1;
+      if (nextIdx < deck.length) {
+        backCard.classList.remove('hidden-card');
+      }
+
+      // 위 카드 날리기
+      topCard.classList.add(direction === 'right' ? 'fly-right' : 'fly-left');
+
+      const onEnd = () => {
+        topCard.removeEventListener('transitionend', onEnd);
+
+        // 날아간 카드 리셋 후 뒤로 보관
+        topCard.classList.remove('fly-left','fly-right','dragging','top');
+        topCard.classList.add('back','hidden-card');
+        topCard.style.transform = '';
+        topCard.style.opacity = '';
+
+        // 🔁 참조 스왑 (DOM 두 장을 교차)
+        [topCard, backCard]     = [backCard, topCard];
+        [topTextEl, backTextEl] = [backTextEl, topTextEl];
+
+        // 역할 클래스도 교체
+        topCard.classList.remove('hidden-card','back');
+        topCard.classList.add('top');
+        backCard.classList.add('back');
+
+        // 인덱스 증가: 이제 화면의 topCard는 deck[idx+1]
+        idx++;
+        updateHUD();
+
+        // 끝 처리
+        if (idx >= deck.length) {
+          topTextEl.textContent = '끝! 🎉';
+          endMsg.classList.remove('hidden');
+          backTextEl.textContent = '';
+          backCard.classList.add('hidden-card');
+          return;
+        }
+
+        // 새로운 뒤 카드에 '다다음' 질문 프리로드
+        const upcoming = idx + 1;
+        if (upcoming < deck.length) {
+          backTextEl.textContent = deck[upcoming];
+          backCard.classList.add('hidden-card'); // 아래는 기본 숨김
+        } else {
+          backTextEl.textContent = '';
+          backCard.classList.add('hidden-card');
+        }
+      };
+      topCard.addEventListener('transitionend', onEnd, { once:true });
+    }
+
+    // ⬇⬇⬇ 이벤트 바인딩 (Delegate to #stack) — 여기만 바뀌었어요!
+    // top 카드가 스왑되어도 항상 최신 .card.top 에서 드래그가 시작되도록 컨테이너에 위임
+    ['pointerdown','touchstart'].forEach(evt => {
+      stackEl.addEventListener(evt, (e) => {
+        // 스택 영역 내에서만 처리, 그리고 top 카드 위에서만 시작
+        const topEl = document.querySelector('.card.top');
+        if (!topEl) return;
+        if (!e.target.closest('.card.top')) {
+          // 초기 상태에서 카드 외 영역을 탭했을 때도 첫 공개는 되도록
+          if (idx < 0) revealFirst();
+          return;
+        }
+        onPointerDown(e);
+      }, { passive: true });
     });
 
-    flipBtn.addEventListener('click', () => card.click());
+    // 이동/해제는 전역 유지
+    ['pointermove','touchmove'].forEach(evt => window.addEventListener(evt, onPointerMove, {passive:true}));
+    ['pointerup','pointercancel','touchend','touchcancel'].forEach(evt => window.addEventListener(evt, onPointerUp, {passive:true}));
 
-    copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(questionText.textContent.trim());
+    // 복사
+    copyBtn.addEventListener('click', async ()=>{
+      try{
+        const text = (idx >= 0 && idx < deck.length) ? deck[idx] : '';
+        await navigator.clipboard.writeText(text);
         copyBtn.textContent = '복사됨!';
-        setTimeout(() => (copyBtn.textContent = '질문 복사'), 1200);
-      } catch {
+        setTimeout(()=>copyBtn.textContent='질문 복사', 1200);
+      }catch{
         alert('복사에 실패했어요. 브라우저 설정을 확인해 주세요.');
       }
     });
 
+    // 리셋
     resetBtn.addEventListener('click', resetDeck);
-
-    window.addEventListener('keydown', (e) => {
-      if (e.target.closest('input, textarea, button')) return;
-      if (e.code === 'Space' && !e.shiftKey) { e.preventDefault(); drawBtn.click(); }
-      if ((e.code === 'Space' && e.shiftKey) || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        e.preventDefault(); card.click();
-      }
-      if (e.key.toLowerCase() === 'r') resetDeck();
-    });
 
     // 초기화
     resetDeck();
