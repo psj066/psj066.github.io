@@ -73,7 +73,7 @@ function resetDeck() {
     return;
     }
 
-    topTextEl.textContent = '화면을 눌러 첫 질문을 보여주세요 👇';
+    topTextEl.textContent = '화면을 눌러 대화를 시작하세요!! 👇';
     backTextEl.textContent = deck[0]; // 첫 질문을 아래에 예열
     // 위치 초기화
     topCard.style.transform = '';
