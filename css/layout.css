@@ -72,12 +72,14 @@ body {
     display: block;
 }
 
-/* Profile grid layout */
+/* Main Grid */
 .profile-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--spacing-xl);
-    padding: var(--spacing-lg) 0;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* Adjusted for mobile 2-col */
+    gap: 16px;
+    /* Slightly tighter gap */
+    padding-bottom: 80px;
 }
 
 /* Calendar layout — sidebar + main */
