@@ -11,6 +11,8 @@ import { renderProfileGrid } from './views/profileGrid.js';
 import { renderCalendarView } from './views/calendarView.js';
 import { renderMasterPage } from './views/masterPage.js';
 
+import { APP_VERSION } from './config.js';
+
 // ---- App State ----
 let currentView = 'applicantForm';
 
@@ -18,6 +20,7 @@ let currentView = 'applicantForm';
 document.addEventListener('DOMContentLoaded', initApp);
 
 async function initApp() {
+    console.log(`%c CCC Soon Profile v${APP_VERSION} `, 'background: #FFB900; color: #fff; font-size: 12px; font-weight: bold; padding: 4px; border-radius: 4px;');
     // Show simple loading state
     const app = $('#app');
     const loading = createElement('div', {
