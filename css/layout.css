@@ -1,0 +1,130 @@
+/* ========================================
+   Layout — containers, grid, responsive
+   ======================================== */
+
+body {
+    font-family: var(--font-family);
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow-x: hidden;
+}
+
+/* Navigation */
+.main-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-xl);
+    background: rgba(255, 253, 249, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+    z-index: var(--z-nav);
+}
+
+.nav-brand {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.nav-btn:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow);
+}
+
+/* Main content */
+#main-content {
+    padding-top: 64px;
+    min-height: 100vh;
+}
+
+/* View system */
+.view {
+    display: none;
+    width: 100%;
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.view.active {
+    display: block;
+}
+
+/* Profile grid layout */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg) 0;
+}
+
+/* Calendar layout — sidebar + main */
+.calendar-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--spacing-2xl);
+    align-items: start;
+}
+
+/* Modal overlay */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(78, 64, 52, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: var(--z-modal);
+    display: none;
+    place-items: center;
+}
+
+.modal-overlay.active {
+    display: grid;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-nav {
+        padding: 0 var(--spacing-md);
+    }
+
+    .view {
+        padding: var(--spacing-xl) var(--spacing-md);
+    }
+
+    .profile-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+    }
+
+    .calendar-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}

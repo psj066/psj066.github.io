@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CCC 동아리 선배 프로필 열람 및 1:1 만남 예약">
+  <title>CCC 순 Profile</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/animations.css">
+
+  <!-- JS (ES Module) -->
+  <script type="module" src="./js/app.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Nav -->
+    <nav id="main-nav" class="main-nav">
+      <div class="nav-brand">CCC 순 Profile</div>
+      <div id="nav-buttons" style="display:none; gap:8px;">
+        <button id="btn-master-page" class="nav-btn">📋 전체 현황</button>
+      </div>
+    </nav>
+
+    <!-- Views -->
+    <main id="main-content">
+      <section id="view-applicant-form" class="view active"></section>
+      <section id="view-profile-grid" class="view"></section>
+      <section id="view-calendar" class="view"></section>
+      <section id="view-master-page" class="view"></section>
+    </main>
+
+    <!-- Modal overlay -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+  </div>
+</body>
+
+</html>
