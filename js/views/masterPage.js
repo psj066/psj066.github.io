@@ -36,7 +36,7 @@ export function renderMasterPage(container, onBack) {
     const tabSeniors = createElement('button', {
         className: `admin-tab${activeTab === 'seniors' ? ' active' : ''}`,
         onClick: () => { activeTab = 'seniors'; renderMasterPage(container, onBack); },
-    }, '👥 선배 관리');
+    }, '👥 순장 관리');
 
     tabBar.appendChild(tabRes);
     tabBar.appendChild(tabSeniors);
