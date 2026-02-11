@@ -5,7 +5,8 @@
 
 import { $, createElement, clearContainer } from '../utils/dom.js';
 import { getReservations, deleteReservation } from '../state.js';
-import { getSeniorById, getSeniorProfiles, addSenior, updateSenior, deleteSenior } from '../data.js';
+import { getSeniorById, getSeniorProfiles, addSenior, updateSenior, deleteSenior, loadSeniors } from '../data.js';
+import { getReservations, deleteReservation, loadState } from '../state.js';
 import { formatDate } from '../utils/date.js';
 import { showToast } from '../utils/animation.js';
 import { readImage, resizeImage } from '../utils/file.js';
@@ -18,12 +19,64 @@ let activeTab = 'reservations';
 export function renderMasterPage(container, onBack) {
     clearContainer(container);
 
+    // Header Controls Container
+    const controls = createElement('div', {
+        style: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 'var(--spacing-md)'
+        }
+    });
+
     // Back button
     const backBtn = createElement('button', {
         className: 'btn-back',
+        style: { margin: 0 }, // Reset margin since it's in a flex container
         onClick: onBack,
     }, '← 프로필 목록으로');
-    container.appendChild(backBtn);
+    controls.appendChild(backBtn);
+
+    // Refresh button
+    const refreshBtn = createElement('button', {
+        className: 'btn btn-secondary',
+        style: {
+            display: 'flex', alignItems: 'center', gap: '6px',
+            fontSize: '14px', padding: '8px 16px'
+        },
+        onClick: async (e) => {
+            const btn = e.target.closest('button');
+            const icon = btn.querySelector('.icon');
+
+            // Animation
+            icon.style.transition = 'transform 0.5s ease';
+            icon.style.transform = 'rotate(360deg)';
+            btn.disabled = true;
+
+            try {
+                // Parallel fetch
+                await Promise.all([
+                    loadState(),   // Reservations
+                    loadSeniors()  // Seniors (incase names changed etc)
+                ]);
+                showToast('데이터가 갱신되었습니다');
+
+                // Re-render
+                renderMasterPage(container, onBack);
+            } catch (err) {
+                console.error(err);
+                showToast('데이터 갱신 실패');
+            } finally {
+                btn.disabled = false;
+                icon.style.transform = 'none';
+            }
+        }
+    });
+
+    refreshBtn.innerHTML = `<span class="icon">🔄</span> 새로고침`;
+    controls.appendChild(refreshBtn);
+
+    container.appendChild(controls);
 
     // Tab bar
     const tabBar = createElement('div', { className: 'admin-tabs' });
