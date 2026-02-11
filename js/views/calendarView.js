@@ -54,28 +54,8 @@ export function renderCalendarView(container, seniorId, onBack, onReserved) {
 function buildMiniProfile(senior) {
     const wrapper = createElement('div', { className: 'mini-profile' });
 
-    const img = createElement('img', {
-        className: 'mini-profile__image',
-        src: senior.photo,
-        alt: senior.name,
-    });
-    img.onerror = function () {
-        this.style.display = 'none';
-        const placeholder = createElement('div', {
-            style: {
-                aspectRatio: '1',
-                background: 'linear-gradient(135deg, #FFB900, #FFD460)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '4rem',
-                color: '#fff',
-                fontWeight: '700',
-            },
-        }, senior.name.charAt(0));
-        wrapper.insertBefore(placeholder, wrapper.firstChild);
-    };
-    wrapper.appendChild(img);
+    // Image removed for simplified view
+    // wrapper.appendChild(img);
 
     const info = createElement('div', { className: 'mini-profile__info' });
     info.appendChild(createElement('div', { className: 'mini-profile__name' }, senior.name));

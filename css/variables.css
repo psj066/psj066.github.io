@@ -4,10 +4,10 @@
 
 :root {
     /* Brand Colors (Warm & Cozy) */
-    --color-primary: #FFB900;
-    /* Warm Yellow/Gold */
+    --color-primary: #FFC947;
+    /* Softer Gold/Mustard */
     --color-primary-light: #FFD460;
-    /* Soft Light Yellow */
+    /* Soft Light Yellow (unchanged but compatible) */
     --color-primary-dark: #E6A700;
     /* Deep Gold */
     --color-accent: #FF7F50;
