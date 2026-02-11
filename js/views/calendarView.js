@@ -24,45 +24,44 @@ export function renderCalendarView(container, seniorId, onBack, onReserved) {
     const senior = getSeniorById(seniorId);
     if (!senior) return;
 
-    // Back button
+    // Back button (Icon)
     const backBtn = createElement('button', {
-        className: 'btn-back',
+        className: 'btn-back-icon',
+        style: {
+            background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer',
+            padding: '8px', marginRight: '8px'
+        },
         onClick: onBack,
-    }, '← 프로필 목록으로');
-    container.appendChild(backBtn);
+    }, '←');
 
-    // Layout: sidebar (mini profile) + calendar
-    const layout = createElement('div', { className: 'calendar-layout anim-fade-in' });
-
-    // Sidebar — mini profile
-    const sidebar = buildMiniProfile(senior);
-    layout.appendChild(sidebar);
+    // Header container (Nav + Mini Profile)
+    // We inject the back button into the mini profile for a unified sticky header
+    const sidebar = buildMiniProfile(senior, backBtn);
+    container.appendChild(sidebar);
 
     // Calendar
     const calendar = buildCalendar(senior);
-    layout.appendChild(calendar);
-
-    container.appendChild(layout);
+    container.appendChild(calendar);
 
     // Bind time slot clicks
     bindTimeSlotEvents(container, senior, onReserved);
 }
 
 /**
- * Build the mini profile sidebar
+ * Build the mini profile sidebar (Sticky Header)
  */
-function buildMiniProfile(senior) {
+function buildMiniProfile(senior, backBtn) {
     const wrapper = createElement('div', { className: 'mini-profile' });
 
-    // Image removed for simplified view
-    // wrapper.appendChild(img);
+    const leftGroup = createElement('div', { style: { display: 'flex', alignItems: 'center' } });
+    leftGroup.appendChild(backBtn);
 
     const info = createElement('div', { className: 'mini-profile__info' });
     info.appendChild(createElement('div', { className: 'mini-profile__name' }, senior.name));
     info.appendChild(createElement('div', { className: 'mini-profile__role' }, senior.role));
-    info.appendChild(createElement('p', { className: 'mini-profile__intro' }, senior.introduction));
-    wrapper.appendChild(info);
+    leftGroup.appendChild(info);
 
+    wrapper.appendChild(leftGroup);
     return wrapper;
 }
 
@@ -71,14 +70,6 @@ function buildMiniProfile(senior) {
  */
 function buildCalendar(senior) {
     const calendarEl = createElement('div', { className: 'calendar-container' });
-
-    // Header
-    const header = createElement('div', { className: 'calendar-header' });
-    header.appendChild(createElement('div', {},
-        createElement('h3', { className: 'calendar-title' }, '📅 시간 선택'),
-        createElement('p', { className: 'calendar-subtitle' }, '2월 22일 ~ 3월 7일')
-    ));
-    calendarEl.appendChild(header);
 
     // Date rows
     const dates = getDateRange(CALENDAR_START, CALENDAR_END);
@@ -172,12 +163,15 @@ function showConfirmBar(container, senior, date, time, onReserved) {
     const dateObj = new Date(date + 'T00:00:00');
     const displayDate = formatDate(dateObj, 'long');
 
-    bar.appendChild(createElement('div', {
-        className: 'confirm-bar__info', innerHTML:
-            `<strong>${senior.name}</strong> 선배 · ${displayDate} <strong>${time}</strong>`
-    }));
+    // 2-line info
+    const infoDiv = createElement('div', { className: 'confirm-bar__info' });
+    infoDiv.innerHTML = `
+        <div style="font-weight:bold; color:var(--color-text); font-size:16px;">${senior.name} 순장</div>
+        <div style="color:var(--color-primary-dark); font-size:14px; margin-top:2px;">${displayDate} ${time}</div>
+    `;
+    bar.appendChild(infoDiv);
 
-    const btnGroup = createElement('div', { style: { display: 'flex', gap: '8px' } });
+    const btnGroup = createElement('div', { className: 'confirm-bar__actions' });
 
     const cancelBtn = createElement('button', {
         className: 'btn btn-secondary',
@@ -193,7 +187,7 @@ function showConfirmBar(container, senior, date, time, onReserved) {
         onClick: () => {
             confirmReservation(senior, date, time, container, onReserved);
         },
-    }, '✓ 신청하기');
+    }, '신청하기');
 
     btnGroup.appendChild(cancelBtn);
     btnGroup.appendChild(confirmBtn);
