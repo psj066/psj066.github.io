@@ -9,7 +9,7 @@ import { animateCardToCorner, fadeIn, fadeOut } from './utils/animation.js';
 import { renderApplicantForm } from './views/applicantForm.js';
 import { renderProfileGrid } from './views/profileGrid.js';
 import { renderCalendarView } from './views/calendarView.js';
-import { renderAdminPage } from './views/admin/AdminMain.js'; // Refactored
+import { renderAdminPage } from './views/admin/AdminMain.js';
 
 import { APP_VERSION } from './config.js';
 import { initSparkles } from './effects.js'; // Import effects
@@ -126,7 +126,7 @@ async function navigateTo(viewName, params = {}) {
             const container = $('#view-master-page');
             container.classList.add('active');
             navBtns.style.display = 'none';
-            renderMasterPage(container, () => navigateTo('profileGrid'));
+            renderAdminPage(container, () => navigateTo('profileGrid'));
             break;
         }
     }
