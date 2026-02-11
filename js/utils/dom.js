@@ -46,6 +46,8 @@ export function createElement(tag, attrs = {}, ...children) {
       el[key] = value;
       // Optionally set attribute for CSS styling needs
       if (value && typeof value === 'boolean') el.setAttribute(key, '');
+    } else if (key === 'htmlFor') {
+      el.setAttribute('for', value);
     } else {
       el.setAttribute(key, value);
     }
