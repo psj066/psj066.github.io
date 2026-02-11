@@ -188,6 +188,8 @@
     cursor: pointer;
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
     position: relative;
+    padding: 0;
+    /* Remove default padding, content handles it */
 }
 
 .profile-card:hover {
