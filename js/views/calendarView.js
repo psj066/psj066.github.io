@@ -156,7 +156,7 @@ function bindTimeSlotEvents(container, senior, onReserved) {
 
                 try {
                     // Simple confirmation as requested
-                    if (confirm('기존 예약을 취소하고 새로 예약하시겠습니까?')) {
+                    if (confirm('기존 신청을 취소하겠습니까?')) {
                         await deleteReservation(existingRes);
                         showToast('기존 신청이 취소되었습니다.');
 
