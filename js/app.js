@@ -12,12 +12,16 @@ import { renderCalendarView } from './views/calendarView.js';
 import { renderMasterPage } from './views/masterPage.js';
 
 import { APP_VERSION } from './config.js';
+import { initSparkles } from './effects.js'; // Import effects
 
 // ---- App State ----
 let currentView = 'applicantForm';
 
-// ---- Initialize ----
-document.addEventListener('DOMContentLoaded', initApp);
+// Initialize App
+document.addEventListener('DOMContentLoaded', async () => {
+    initSparkles(); // Start background effects
+    initApp();
+});
 
 async function initApp() {
     console.log(`%c CCC Soon Profile v${APP_VERSION} `, 'background: #FFB900; color: #fff; font-size: 12px; font-weight: bold; padding: 4px; border-radius: 4px;');
