@@ -71,7 +71,7 @@ export function createProfileCard(senior) {
     // Fallback for missing images
     img.onerror = function () {
         this.style.display = 'none';
-        imgWrapper.style.background = `linear-gradient(135deg, #FFB900, #FFD460)`;
+        // imgWrapper.style.background = `linear-gradient(135deg, #FFB900, #FFD460)`; // Removed for Glassmorphism
         imgWrapper.style.display = 'flex';
         imgWrapper.style.alignItems = 'center';
         imgWrapper.style.justifyContent = 'center';

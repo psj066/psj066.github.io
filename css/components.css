@@ -57,7 +57,7 @@
 .form-select:focus,
 .form-textarea:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(255, 185, 0, 0.2);
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
 }
 
 .form-input.error,
