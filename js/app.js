@@ -64,6 +64,10 @@ async function initApp() {
         }
     });
 
+    // My Info button
+    const myInfoBtn = $('#btn-my-info');
+    myInfoBtn.addEventListener('click', openMyInfoModal);
+
     // Navigate to initial view
     navigateTo(currentView);
 }
@@ -125,9 +129,6 @@ async function navigateTo(viewName, params = {}) {
 
     currentView = viewName;
     setState('currentView', viewName);
-
-    // Manage floating profile card visibility
-    updateFloatingCard(viewName);
 }
 
 /**
@@ -196,104 +197,77 @@ export function showMasterPage() {
 }
 
 // ========================================
-// Floating Profile Card
+// My Info Modal
 // ========================================
 
-let floatingCardCollapsed = false;
-
 /**
- * Create or update the floating profile card
+ * Open the My Info Modal
  */
-function updateFloatingCard(viewName) {
-    const existing = $('#floating-profile-card');
-    const showOn = ['profileGrid', 'calendarView'];
+function openMyInfoModal() {
     const state = getState();
+    const applicant = state.applicant;
 
-    if (!showOn.includes(viewName) || !state.applicant) {
-        // Hide
-        if (existing) {
-            existing.style.transform = 'translateY(120%)';
-            existing.style.opacity = '0';
-            setTimeout(() => existing.remove(), 300);
-        }
+    if (!applicant) {
+        alert('등록된 정보가 없습니다.');
         return;
     }
 
-    // Remove old and rebuild (data may have changed)
-    if (existing) existing.remove();
+    const overlay = $('#modal-overlay');
+    overlay.innerHTML = ''; // Clear previous
 
-    const card = createFloatingCard(state.applicant);
-    document.body.appendChild(card);
+    const modal = createElement('div', { className: 'my-info-modal' });
 
-    // Animate in
-    requestAnimationFrame(() => {
-        card.style.transform = '';
-        card.style.opacity = '';
-    });
-}
-
-/**
- * Build the floating card DOM
- */
-function createFloatingCard(applicant) {
-    const card = createElement('div', {
-        className: `floating-profile${floatingCardCollapsed ? ' collapsed' : ''}`,
-        id: 'floating-profile-card',
-        style: { transform: 'translateY(120%)', opacity: '0' },
-    });
-
-    // Header
-    const header = createElement('div', { className: 'floating-profile__header' });
-    header.appendChild(createElement('span', { className: 'floating-profile__label' }, '내 정보'));
-    const toggleBtn = createElement('button', {
-        className: 'floating-profile__toggle',
-        onClick: (e) => {
-            e.stopPropagation();
-            floatingCardCollapsed = !floatingCardCollapsed;
-            card.classList.toggle('collapsed');
-        },
-    }, '▲');
-    header.appendChild(toggleBtn);
-    card.appendChild(header);
-
-    // Body
-    const body = createElement('div', { className: 'floating-profile__body' });
+    // Close Button
+    const closeBtn = createElement('button', {
+        className: 'my-info-modal__close',
+        onClick: () => overlay.classList.remove('active'),
+    }, '✕');
+    modal.appendChild(closeBtn);
 
     // Photo
     if (applicant.photo) {
-        const photoContainer = createElement('div', {
-            style: {
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                overflow: 'hidden',
-                margin: '0 auto var(--spacing-sm)',
-                border: '2px solid var(--color-border)',
-            },
-        });
-        photoContainer.innerHTML = `<img src="${applicant.photo}" style="width: 100%; height: 100%; object-fit: cover;">`;
-        body.appendChild(photoContainer);
+        const photoWrapper = createElement('div', { className: 'my-info-modal__photo-wrapper' });
+        photoWrapper.innerHTML = `<img src="${applicant.photo}" class="my-info-modal__photo" alt="Profile">`;
+        modal.appendChild(photoWrapper);
+    } else {
+        // Fallback or placeholder?
+        const photoWrapper = createElement('div', { className: 'my-info-modal__photo-wrapper', style: { display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-elevated)' } });
+        photoWrapper.innerHTML = `<span style="font-size: 2rem;">👤</span>`;
+        modal.appendChild(photoWrapper);
     }
 
-    body.appendChild(createElement('div', { className: 'floating-profile__name' }, applicant.name || '이름 없음'));
+    // Name
+    modal.appendChild(createElement('div', { className: 'my-info-modal__name' }, applicant.name));
 
-    const detail = `${applicant.studentId} · ${applicant.gender} · ${applicant.age}세`;
-    body.appendChild(createElement('div', { className: 'floating-profile__detail' }, detail));
+    // Details
+    const detailText = `${applicant.studentId} · ${applicant.gender} · ${applicant.age}세`;
+    modal.appendChild(createElement('div', { className: 'my-info-modal__detail' }, detailText));
 
+    // Intro
     if (applicant.introduction) {
-        body.appendChild(createElement('p', { className: 'floating-profile__intro' }, applicant.introduction));
+        modal.appendChild(createElement('div', { className: 'my-info-modal__intro' }, applicant.introduction));
     }
+
+    // Actions
+    const actions = createElement('div', { className: 'my-info-modal__actions' });
 
     const editBtn = createElement('button', {
-        className: 'floating-profile__edit',
-        onClick: (e) => {
-            e.stopPropagation();
+        className: 'btn btn-primary btn-full',
+        onClick: () => {
+            overlay.classList.remove('active');
             navigateTo('applicantForm');
-        },
+        }
     }, '✏️ 정보 수정하기');
-    body.appendChild(editBtn);
 
-    card.appendChild(body);
+    actions.appendChild(editBtn);
+    modal.appendChild(actions);
 
-    return card;
+    overlay.appendChild(modal);
+    overlay.classList.add('active');
+
+    // Close on overlay click
+    overlay.onclick = (e) => {
+        if (e.target === overlay) overlay.classList.remove('active');
+    };
 }
+
