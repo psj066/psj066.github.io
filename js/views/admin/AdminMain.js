@@ -83,7 +83,7 @@ function renderControls(container, onBack) {
             }
         }
     });
-    refreshBtn.innerHTML = `<span class="icon">🔄</span> 새로고침`;
+    refreshBtn.innerHTML = `<span class="icon"></span> 새로고침`;
     controls.appendChild(refreshBtn);
 
     return controls;
