@@ -957,6 +957,40 @@
     margin-bottom: var(--spacing-md);
 }
 
+/* The stable container for content */
+.admin-content-area {
+    background: #fff;
+    min-height: 400px;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-glass), 0 10px 30px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    /* Prevent child margin blowout */
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .admin-content-area {
+        padding: var(--spacing-md);
+        /* Reduce padding on mobile */
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        /* Simplify radius if needed, or keep consistent */
+    }
+
+    .admin-tab {
+        padding: 10px 16px;
+        /* Smaller tabs */
+        font-size: 13px;
+    }
+}
+
+/* Fix for first tab active: square top-left */
+.admin-content-area[data-tab="reservations"] {
+    border-top-left-radius: 0;
+}
+
 /* ---- My Info Modal ---- */
 .my-info-modal {
     background: var(--gradient-card);
