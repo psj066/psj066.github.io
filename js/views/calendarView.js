@@ -183,75 +183,78 @@ function bindTimeSlotEvents(container, senior, onReserved) {
 
         const { date, time } = chip.dataset;
 
-        // Constraint Check: Single Reservation
-        const { getUserReservation, deleteReservation, getSeniorById } = await import('../state.js');
-        const existingRes = getUserReservation();
+        isProcessing = true; // Lock
 
-        // If user selects a *new* slot (and it's not the one they already have)
-        if (existingRes) {
-            // Check if clicking their OWN reservation
-            if (existingRes.seniorId === senior.id && existingRes.date === date && existingRes.time === time) {
-                return;
-            }
+        try {
+            // Constraint Check: Single Reservation
+            const { getUserReservation, deleteReservation } = await import('../state.js');
+            const existingRes = getUserReservation();
 
-            // Only trigger if this is a NEW selection (toggle ON)
-            if (!chip.classList.contains('selected')) {
-                isProcessing = true;
-                document.body.style.cursor = 'wait';
-
-                try {
-                    // Simple confirmation as requested
-                    if (confirm('기존 신청을 취소하겠습니까?')) {
-                        await deleteReservation(existingRes);
-                        showToast('기존 신청이 취소되었습니다.');
-
-                        // Re-enable the OLD slot visually if it's on the current screen
-                        if (existingRes.seniorId === senior.id) {
-                            const oldChip = container.querySelector(`.time-chip[data-date="${existingRes.date}"][data-time="${existingRes.time}"]`);
-                            if (oldChip) {
-                                oldChip.classList.remove('booked');
-                                oldChip.disabled = false;
-                                oldChip.title = '';
-                            }
-                        }
-
-                        // UX Improvement: Proceed to select the NEW slot immediately
-                        // Fall through to normal selection logic
-                        isProcessing = false;
-                        document.body.style.cursor = 'default';
-
-                    } else {
-                        // User Cancelled the interaction
-                        isProcessing = false;
-                        document.body.style.cursor = 'default';
-                        return;
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('취소에 실패했습니다.');
-                    isProcessing = false;
-                    document.body.style.cursor = 'default';
+            // If user selects a *new* slot (and it's not the one they already have)
+            if (existingRes) {
+                // Check if clicking their OWN reservation
+                if (existingRes.seniorId === senior.id && existingRes.date === date && existingRes.time === time) {
                     return;
                 }
+
+                // Only trigger if this is a NEW selection (toggle ON)
+                if (!chip.classList.contains('selected')) {
+                    document.body.style.cursor = 'wait';
+
+                    try {
+                        // Simple confirmation as requested
+                        if (confirm('기존 신청을 취소하겠습니까?')) {
+                            await deleteReservation(existingRes);
+                            showToast('기존 신청이 취소되었습니다.');
+
+                            // Re-enable the OLD slot visually if it's on the current screen
+                            if (existingRes.seniorId === senior.id) {
+                                const oldChip = container.querySelector(`.time-chip[data-date="${existingRes.date}"][data-time="${existingRes.time}"]`);
+                                if (oldChip) {
+                                    oldChip.classList.remove('booked');
+                                    oldChip.disabled = false;
+                                    oldChip.title = '';
+                                }
+                            }
+
+                            // Revert: Stop here. User must click again. (Intended inconvenience)
+                            return;
+
+                        } else {
+                            // User Cancelled the interaction
+                            return;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('취소에 실패했습니다.');
+                        return;
+                    }
+                }
             }
-        }
 
-        // Normal Selection Logic
+            // Normal Selection Logic
 
-        // 1. Deselect any previously selected
-        const prevSelected = container.querySelector('.time-chip.selected');
-        if (prevSelected && prevSelected !== chip) {
-            prevSelected.classList.remove('selected');
-        }
+            // 1. Deselect any previously selected
+            const prevSelected = container.querySelector('.time-chip.selected');
+            if (prevSelected && prevSelected !== chip) {
+                prevSelected.classList.remove('selected');
+            }
 
-        // 2. Toggle the clicked chip
-        chip.classList.toggle('selected');
+            // 2. Toggle the clicked chip
+            chip.classList.toggle('selected');
 
-        // 3. Show/Hide Confirm Bar
-        if (chip.classList.contains('selected')) {
-            showConfirmBar(container, senior, date, time, onReserved);
-        } else {
-            hideConfirmBar();
+            // 3. Show/Hide Confirm Bar
+            if (chip.classList.contains('selected')) {
+                showConfirmBar(container, senior, date, time, onReserved);
+            } else {
+                hideConfirmBar();
+            }
+
+        } catch (err) {
+            console.error('Error in time slot click:', err);
+        } finally {
+            isProcessing = false; // Unlock
+            document.body.style.cursor = 'default';
         }
     });
 }
