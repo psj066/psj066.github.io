@@ -150,10 +150,6 @@ export function getReservations() {
 }
 
 /**
- * Check if a specific slot is already booked
- * @param {string} seniorId
- * @param {string} date
- * @param {string} time
  * @returns {boolean}
  */
 export function isSlotBooked(seniorId, date, time) {
@@ -161,6 +157,16 @@ export function isSlotBooked(seniorId, date, time) {
         (r) => r.seniorId === seniorId && r.date === date && r.time === time
     );
 }
+
+/**
+ * Get the current user's reservation (if any)
+ * matches by studentId
+ */
+export function getUserReservation() {
+    if (!state.applicant || !state.applicant.studentId) return null;
+    return state.reservations.find(r => r.applicant && r.applicant.studentId === state.applicant.studentId);
+}
+
 
 /**
  * Clear all state (for debugging)

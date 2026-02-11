@@ -6,7 +6,7 @@ import { $, createElement, clearContainer } from '../utils/dom.js';
 import { getDateRange, formatDate, isWeekend, toDateString } from '../utils/date.js';
 import { showToast } from '../utils/animation.js';
 import { getAvailableSlots, getSeniorById } from '../data.js';
-import { addReservation, isSlotBooked } from '../state.js';
+import { addReservation, isSlotBooked, getUserReservation, deleteReservation } from '../state.js';
 
 const CALENDAR_START = '2026-02-22';
 const CALENDAR_END = '2026-03-07';
@@ -128,11 +128,47 @@ function renderDateRow(date, dateStr, availableTimes, seniorId) {
  * Bind click events on time chips
  */
 function bindTimeSlotEvents(container, senior, onReserved) {
-    container.addEventListener('click', (e) => {
+    container.addEventListener('click', async (e) => {
         const chip = e.target.closest('.time-chip');
         if (!chip || chip.classList.contains('booked')) return;
 
         const { date, time, seniorId } = chip.dataset;
+
+        // Constraint Check: Single Reservation
+        const { getUserReservation, deleteReservation, getSeniorById } = await import('../state.js'); // Dynamic import to avoid circular dependency if needed, or better explicit import at top
+        const existingRes = getUserReservation();
+
+        // If user selects a *new* slot (and it's not the one they already have - though that would be 'booked' usually)
+        if (existingRes) {
+            // Check if clicking their OWN reservation? (It would be marked booked, but let's be safe)
+            if (existingRes.seniorId === seniorId && existingRes.date === date && existingRes.time === time) {
+                // Clicking their own booked slot -> Maybe allow cancel? 
+                // For now, let's treat "booked" slots as disabled unless we implement "My Slot" distinction visually.
+                return;
+            }
+
+            // Clicking a new slot while having an old one
+            // We only trigger this if they try to SELECT (toggle on)
+            if (!chip.classList.contains('selected')) {
+                // Build friendly message
+                const oldSenior = await import('../data.js').then(m => m.getSeniorById(existingRes.seniorId));
+                const oldSeniorName = oldSenior ? oldSenior.name : '알 수 없음';
+
+                if (confirm(`이미 '${oldSeniorName}' 순장님과 약속(${existingRes.date} ${existingRes.time})이 있습니다.\n\n기존 약속을 취소하고 이 시간으로 새로 신청하시겠습니까?`)) {
+                    try {
+                        await deleteReservation(existingRes);
+                        showToast('기존 약속이 취소되었습니다.');
+                        // Proceed to select new
+                    } catch (err) {
+                        console.error(err);
+                        alert('기존 약속 취소에 실패했습니다.');
+                        return;
+                    }
+                } else {
+                    return; // Abort
+                }
+            }
+        }
 
         // Deselect any previously selected
         const prevSelected = container.querySelector('.time-chip.selected');

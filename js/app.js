@@ -224,33 +224,86 @@ function openMyInfoModal() {
     }, '✕');
     modal.appendChild(closeBtn);
 
-    // Photo
-    if (applicant.photo) {
-        const photoWrapper = createElement('div', { className: 'my-info-modal__photo-wrapper' });
-        photoWrapper.innerHTML = `<img src="${applicant.photo}" class="my-info-modal__photo" alt="Profile">`;
-        modal.appendChild(photoWrapper);
-    } else {
-        // Fallback or placeholder?
-        const photoWrapper = createElement('div', { className: 'my-info-modal__photo-wrapper', style: { display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-elevated)' } });
-        photoWrapper.innerHTML = `<span style="font-size: 2rem;">👤</span>`;
-        modal.appendChild(photoWrapper);
-    }
+    // Reservation Status
+    const reserved = getUserReservation();
+    const senior = reserved ? getSeniorById(reserved.seniorId) : null;
 
-    // Name
-    modal.appendChild(createElement('div', { className: 'my-info-modal__name' }, applicant.name));
+    // Content Wrapper
+    const content = createElement('div', { className: 'my-info-content' });
 
-    // Details
-    const detailText = `${applicant.studentId} · ${applicant.gender} · ${applicant.age}세`;
-    modal.appendChild(createElement('div', { className: 'my-info-modal__detail' }, detailText));
+    // 1. Header (Name, Badge, ID)
+    const header = createElement('div', { className: 'my-info-header', style: 'margin-bottom: 24px;' });
+    const genderBadge = applicant.gender === '여' ? '👩' : '👨';
+    header.appendChild(createElement('div', {
+        className: 'my-info-modal__name'
+    }, `${applicant.name} ${genderBadge}`));
 
-    // Intro
+    header.appendChild(createElement('div', {
+        className: 'my-info-modal__detail'
+    }, `${applicant.studentId} · ${applicant.age}세`));
+    content.appendChild(header);
+
+    // 2. Intro
     if (applicant.introduction) {
-        modal.appendChild(createElement('div', { className: 'my-info-modal__intro' }, applicant.introduction));
+        const introBox = createElement('div', { className: 'my-info-modal__intro' }, applicant.introduction);
+        content.appendChild(introBox);
     }
 
-    // Actions
-    const actions = createElement('div', { className: 'my-info-modal__actions' });
+    // 3. Reservation Card
+    const resSection = createElement('div', {
+        className: 'my-info-reservation',
+        style: 'background: var(--color-bg); padding: 16px; border-radius: 12px; margin-bottom: 24px; text-align: left; border: 1px solid var(--color-border);'
+    });
 
+    resSection.appendChild(createElement('h3', {
+        style: 'font-size: 14px; color: var(--color-text-muted); margin-bottom: 12px; font-weight: 600;'
+    }, '📅 나의 신청 현황'));
+
+    if (reserved && senior) {
+        const resCard = createElement('div', { style: 'display: flex; justify-content: space-between; align-items: center;' });
+
+        const resInfo = createElement('div');
+        resInfo.appendChild(createElement('div', {
+            style: 'font-size: 16px; font-weight: 700; color: var(--color-text); margin-bottom: 4px;'
+        }, `${senior.name} 순장`));
+        resInfo.appendChild(createElement('div', {
+            style: 'font-size: 14px; color: var(--color-primary-dark);'
+        }, `${reserved.date} ${reserved.time}`));
+
+        const cancelBtn = createElement('button', {
+            className: 'btn btn-secondary',
+            style: 'padding: 6px 12px; font-size: 13px; color: var(--color-danger); border-color: var(--color-danger); background: rgba(255,0,0,0.05);',
+            onClick: async () => {
+                if (confirm('신청을 취소하시겠습니까?')) {
+                    try {
+                        const { deleteReservation } = await import('./state.js');
+                        await deleteReservation(reserved);
+                        alert('신청이 취소되었습니다.');
+                        overlay.classList.remove('active');
+                        const { currentView } = getState();
+                        if (currentView === 'calendarView' || currentView === 'profileGrid') {
+                            navigateTo(currentView);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        alert('취소에 실패했습니다.');
+                    }
+                }
+            }
+        }, '취소');
+
+        resCard.appendChild(resInfo);
+        resCard.appendChild(cancelBtn);
+        resSection.appendChild(resCard);
+    } else {
+        resSection.appendChild(createElement('p', {
+            style: 'font-size: 14px; color: var(--color-text-muted); text-align: center; padding: 10px 0;'
+        }, '현재 신청한 약속이 없습니다.'));
+    }
+    content.appendChild(resSection);
+
+    // 4. Edit Button
+    const actions = createElement('div', { className: 'my-info-modal__actions' });
     const editBtn = createElement('button', {
         className: 'btn btn-primary btn-full',
         onClick: () => {
@@ -258,9 +311,10 @@ function openMyInfoModal() {
             navigateTo('applicantForm');
         }
     }, '✏️ 정보 수정하기');
-
     actions.appendChild(editBtn);
-    modal.appendChild(actions);
+    content.appendChild(actions);
+
+    modal.appendChild(content);
 
     overlay.appendChild(modal);
     overlay.classList.add('active');

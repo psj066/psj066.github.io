@@ -590,7 +590,7 @@ function handleSeniorFormSubmit(existingSenior, pageContainer, onBack) {
     const role = $('#senior-role')?.value.trim();
     const introduction = $('#senior-intro')?.value.trim();
     const photo = $('#senior-photo-data')?.value;
-    const gender = document.querySelector('input[name="senior-gender"]:checked')?.value || '남';
+    const gender = document.querySelector('.senior-form input[name="senior-gender"]:checked')?.value || '남';
 
     if (!name) {
         alert('이름을 입력해주세요.');
