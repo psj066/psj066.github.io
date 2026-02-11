@@ -17,10 +17,8 @@
     font-size: var(--font-size-2xl);
     font-weight: 700;
     margin-bottom: var(--spacing-xs);
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text);
 }
 
 .form-subtitle {
@@ -364,7 +362,8 @@
 .time-chip:hover {
     border-color: var(--color-primary);
     color: var(--color-primary-dark);
-    background: rgba(255, 201, 71, 0.1);
+    color: var(--color-primary-dark);
+    background: rgba(0, 188, 212, 0.05);
     transform: none;
     box-shadow: none;
 }
@@ -372,10 +371,10 @@
 .time-chip.selected {
     background: var(--color-primary);
     /* High contrast yellow */
-    color: #000;
-    /* Black text for max contrast */
-    border-color: var(--color-primary-dark);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    /* White text */
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
 }
 
 .time-chip.booked {
@@ -453,7 +452,6 @@
     width: 100%;
     margin-bottom: var(--spacing-xs);
     color: var(--color-text);
-    /* Solid dark color, no gradient */
 }
 
 .form-subtitle {
@@ -481,7 +479,6 @@
     font-weight: 700;
     margin-bottom: var(--spacing-xs);
     color: var(--color-text);
-    /* Solid dark color */
 }
 
 .master-subtitle {
@@ -499,7 +496,6 @@
     margin-bottom: var(--spacing-md);
     padding-bottom: var(--spacing-sm);
     border-bottom: 2px solid var(--color-primary-light);
-    /* Softer border */
     display: inline-block;
     color: var(--color-text);
 }
@@ -512,7 +508,6 @@
 
 .reservation-card {
     background: var(--color-bg-elevated);
-    /* Glass background */
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: var(--radius-md);
     padding: var(--spacing-lg);
@@ -531,7 +526,6 @@
     font-size: var(--font-size-lg);
     font-weight: 700;
     color: var(--color-primary-dark);
-    /* Darker, readable Cyan */
 }
 
 .reservation-card__time {
@@ -583,7 +577,7 @@
 
 .admin-tab.active {
     color: var(--color-primary-light);
-    background: rgba(255, 185, 0, 0.1);
+    background: rgba(0, 188, 212, 0.1);
 }
 
 .admin-tab.active::after {
@@ -608,11 +602,14 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--spacing-md);
-    background: var(--gradient-card);
-    border: 1px solid var(--color-border);
+    background: var(--color-bg-elevated);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: var(--radius-md);
     padding: var(--spacing-lg);
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-glass);
 }
 
 .senior-admin-card:hover {
@@ -639,7 +636,7 @@
 
 .senior-admin-card__role {
     font-size: var(--font-size-xs);
-    color: var(--color-accent);
+    color: var(--color-text-secondary);
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -709,7 +706,8 @@
 }
 
 .slot-day__header:hover {
-    background: rgba(255, 185, 0, 0.08);
+    background: rgba(0, 188, 212, 0.08);
+    /* Cyan tint */
 }
 
 .slot-day__label-area {
@@ -739,8 +737,8 @@
 }
 
 .slot-day__badge.has-slots {
-    background: rgba(255, 185, 0, 0.2);
-    color: var(--color-primary-light);
+    background: rgba(0, 188, 212, 0.15);
+    color: var(--color-primary-dark);
     font-weight: 700;
 }
 
@@ -814,8 +812,8 @@
 
 .slot-chip:hover {
     border-color: var(--color-primary-light);
-    color: var(--color-primary-light);
-    background: rgba(255, 185, 0, 0.08);
+    color: var(--color-primary-dark);
+    background: rgba(0, 188, 212, 0.05);
 }
 
 .slot-chip.selected {
