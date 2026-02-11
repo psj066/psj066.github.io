@@ -9,7 +9,7 @@ import { animateCardToCorner, fadeIn, fadeOut } from './utils/animation.js';
 import { renderApplicantForm } from './views/applicantForm.js';
 import { renderProfileGrid } from './views/profileGrid.js';
 import { renderCalendarView } from './views/calendarView.js';
-import { renderMasterPage } from './views/masterPage.js';
+import { renderAdminPage } from './views/admin/AdminMain.js'; // Refactored
 
 import { APP_VERSION } from './config.js';
 import { initSparkles } from './effects.js'; // Import effects
