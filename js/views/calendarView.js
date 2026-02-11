@@ -144,7 +144,7 @@ function bindTimeSlotEvents(container, senior, onReserved) {
 
         // If user selects a *new* slot (and it's not the one they already have)
         if (existingRes) {
-            // Check if clicking their OWN reservation?
+            // Check if clicking their OWN reservation
             if (existingRes.seniorId === senior.id && existingRes.date === date && existingRes.time === time) {
                 return;
             }
@@ -156,7 +156,7 @@ function bindTimeSlotEvents(container, senior, onReserved) {
 
                 try {
                     // Simple confirmation as requested
-                    if (confirm('기존 신청을 취소하겠습니까?')) {
+                    if (confirm('기존 예약을 취소하고 새로 예약하시겠습니까?')) {
                         await deleteReservation(existingRes);
                         showToast('기존 신청이 취소되었습니다.');
 
@@ -171,7 +171,6 @@ function bindTimeSlotEvents(container, senior, onReserved) {
                         }
 
                         // Stop here. Do NOT select the new slot.
-                        // User must click again to select.
                         isProcessing = false;
                         document.body.style.cursor = 'default';
                         return;
@@ -192,7 +191,7 @@ function bindTimeSlotEvents(container, senior, onReserved) {
             }
         }
 
-        // Normal Selection Logic (Runs if no existing reservation OR if chip was already selected)
+        // Normal Selection Logic
 
         // 1. Deselect any previously selected
         const prevSelected = container.querySelector('.time-chip.selected');
