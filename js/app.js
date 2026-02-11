@@ -35,7 +35,7 @@ async function initApp() {
             alignItems: 'center', justifyContent: 'center', zIndex: 9999,
             fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary)'
         }
-    }, '로딩 중...');
+    }, '로딩 중');
     document.body.appendChild(loading);
 
     try {
