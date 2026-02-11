@@ -85,8 +85,9 @@ export function createProfileCard(senior) {
 
     // Info
     const info = createElement('div', { className: 'profile-card__info' });
-    info.appendChild(createElement('div', { className: 'profile-card__role' }, senior.role));
     info.appendChild(createElement('div', { className: 'profile-card__name' }, senior.name));
+    // Role removed as per request
+    // info.appendChild(createElement('div', { className: 'profile-card__role' }, senior.role));
     info.appendChild(createElement('p', { className: 'profile-card__intro' }, senior.introduction));
     card.appendChild(info);
 

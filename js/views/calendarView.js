@@ -58,7 +58,8 @@ function buildMiniProfile(senior, backBtn) {
 
     const info = createElement('div', { className: 'mini-profile__info' });
     info.appendChild(createElement('div', { className: 'mini-profile__name' }, senior.name));
-    info.appendChild(createElement('div', { className: 'mini-profile__role' }, senior.role));
+    // Role removed
+    // info.appendChild(createElement('div', { className: 'mini-profile__role' }, senior.role));
     leftGroup.appendChild(info);
 
     wrapper.appendChild(leftGroup);
