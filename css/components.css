@@ -957,13 +957,105 @@
     margin-bottom: var(--spacing-md);
 }
 
+/* ---- Admin Tabs (& Shell) ---- */
+.admin-shell {
+    position: relative;
+    padding-bottom: var(--spacing-3xl);
+}
+
+.admin-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    /* Increased spacing */
+    padding: 0 var(--spacing-xs);
+}
+
+/* Link-style Buttons for Admin Header */
+.admin-controls .btn,
+.admin-controls .btn-back,
+.admin-controls .btn-refresh {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    height: auto;
+    border-radius: 0;
+    backdrop-filter: none;
+}
+
+.admin-controls .btn:hover,
+.admin-controls .btn-back:hover,
+.admin-controls .btn-refresh:hover {
+    color: var(--color-primary);
+    transform: none;
+    text-decoration: underline;
+    background: transparent;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding-bottom: 0;
+    padding-left: var(--spacing-sm);
+    position: relative;
+    z-index: 2;
+    margin-bottom: -1px;
+}
+
+.admin-tab {
+    padding: 12px 24px;
+    border-radius: 12px 12px 0 0;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-bottom: none;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    top: 0;
+    backdrop-filter: blur(4px);
+}
+
+.admin-tab:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--color-text);
+}
+
+.admin-tab.active {
+    color: var(--color-primary-dark);
+    background: rgba(255, 255, 255, 0.6);
+    /* Semi-transparent match */
+    font-weight: 700;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    border-color: rgba(255, 255, 255, 0.8);
+    border-bottom-color: transparent;
+    padding-bottom: 13px;
+    backdrop-filter: blur(12px);
+}
+
 /* The stable container for content */
 .admin-content-area {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.6);
+    /* Glassy Transparent */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
     min-height: 400px;
     border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
     padding: var(--spacing-xl);
-    box-shadow: var(--shadow-glass), 0 10px 30px rgba(0, 0, 0, 0.05);
+
+    /* Distinct Border & Shadow */
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: var(--shadow-glass), 0 8px 32px rgba(0, 0, 0, 0.05);
+
     position: relative;
     z-index: 1;
     overflow: hidden;
