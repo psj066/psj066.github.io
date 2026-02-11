@@ -3,7 +3,7 @@
 // ========================================
 
 import { $, $$, createElement } from './utils/dom.js';
-import { loadState, getState, setState } from './state.js';
+import { loadState, getState, setState, getUserReservation } from './state.js';
 import { loadSeniors, getSeniorProfiles, getSeniorById } from './data.js';
 import { animateCardToCorner, fadeIn, fadeOut } from './utils/animation.js';
 import { renderApplicantForm } from './views/applicantForm.js';
