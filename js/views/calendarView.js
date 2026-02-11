@@ -128,57 +128,82 @@ function renderDateRow(date, dateStr, availableTimes, seniorId) {
  * Bind click events on time chips
  */
 function bindTimeSlotEvents(container, senior, onReserved) {
+    let isProcessing = false;
+
     container.addEventListener('click', async (e) => {
+        if (isProcessing) return;
+
         const chip = e.target.closest('.time-chip');
         if (!chip || chip.classList.contains('booked')) return;
 
-        const { date, time, seniorId } = chip.dataset;
+        const { date, time } = chip.dataset;
 
         // Constraint Check: Single Reservation
-        const { getUserReservation, deleteReservation, getSeniorById } = await import('../state.js'); // Dynamic import to avoid circular dependency if needed, or better explicit import at top
+        const { getUserReservation, deleteReservation, getSeniorById } = await import('../state.js');
         const existingRes = getUserReservation();
 
-        // If user selects a *new* slot (and it's not the one they already have - though that would be 'booked' usually)
+        // If user selects a *new* slot (and it's not the one they already have)
         if (existingRes) {
-            // Check if clicking their OWN reservation? (It would be marked booked, but let's be safe)
-            if (existingRes.seniorId === seniorId && existingRes.date === date && existingRes.time === time) {
-                // Clicking their own booked slot -> Maybe allow cancel? 
-                // For now, let's treat "booked" slots as disabled unless we implement "My Slot" distinction visually.
+            // Check if clicking their OWN reservation?
+            if (existingRes.seniorId === senior.id && existingRes.date === date && existingRes.time === time) {
                 return;
             }
 
-            // Clicking a new slot while having an old one
-            // We only trigger this if they try to SELECT (toggle on)
+            // Only trigger if this is a NEW selection (toggle ON)
             if (!chip.classList.contains('selected')) {
-                // Build friendly message
-                const oldSenior = await import('../data.js').then(m => m.getSeniorById(existingRes.seniorId));
-                const oldSeniorName = oldSenior ? oldSenior.name : '알 수 없음';
+                isProcessing = true;
+                document.body.style.cursor = 'wait';
 
-                if (confirm(`이미 '${oldSeniorName}' 순장님과 약속(${existingRes.date} ${existingRes.time})이 있습니다.\n\n기존 약속을 취소하고 이 시간으로 새로 신청하시겠습니까?`)) {
-                    try {
+                try {
+                    // Simple confirmation as requested
+                    if (confirm('기존 신청을 취소하겠습니까?')) {
                         await deleteReservation(existingRes);
-                        showToast('기존 약속이 취소되었습니다.');
-                        // Proceed to select new
-                    } catch (err) {
-                        console.error(err);
-                        alert('기존 약속 취소에 실패했습니다.');
+                        showToast('기존 신청이 취소되었습니다.');
+
+                        // Re-enable the OLD slot visually if it's on the current screen
+                        if (existingRes.seniorId === senior.id) {
+                            const oldChip = container.querySelector(`.time-chip[data-date="${existingRes.date}"][data-time="${existingRes.time}"]`);
+                            if (oldChip) {
+                                oldChip.classList.remove('booked');
+                                oldChip.disabled = false;
+                                oldChip.title = '';
+                            }
+                        }
+
+                        // Stop here. Do NOT select the new slot.
+                        // User must click again to select.
+                        isProcessing = false;
+                        document.body.style.cursor = 'default';
+                        return;
+
+                    } else {
+                        // User Cancelled the interaction
+                        isProcessing = false;
+                        document.body.style.cursor = 'default';
                         return;
                     }
-                } else {
-                    return; // Abort
+                } catch (err) {
+                    console.error(err);
+                    alert('취소에 실패했습니다.');
+                    isProcessing = false;
+                    document.body.style.cursor = 'default';
+                    return;
                 }
             }
         }
 
-        // Deselect any previously selected
+        // Normal Selection Logic (Runs if no existing reservation OR if chip was already selected)
+
+        // 1. Deselect any previously selected
         const prevSelected = container.querySelector('.time-chip.selected');
         if (prevSelected && prevSelected !== chip) {
             prevSelected.classList.remove('selected');
         }
 
-        // Toggle selection
+        // 2. Toggle the clicked chip
         chip.classList.toggle('selected');
 
+        // 3. Show/Hide Confirm Bar
         if (chip.classList.contains('selected')) {
             showConfirmBar(container, senior, date, time, onReserved);
         } else {
