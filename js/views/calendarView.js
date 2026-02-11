@@ -215,10 +215,10 @@ function bindTimeSlotEvents(container, senior, onReserved) {
                             }
                         }
 
-                        // Stop here. Do NOT select the new slot.
+                        // UX Improvement: Proceed to select the NEW slot immediately
+                        // Fall through to normal selection logic
                         isProcessing = false;
                         document.body.style.cursor = 'default';
-                        return;
 
                     } else {
                         // User Cancelled the interaction
@@ -260,8 +260,8 @@ function bindTimeSlotEvents(container, senior, onReserved) {
  * Show the confirmation bar at bottom
  */
 function showConfirmBar(container, senior, date, time, onReserved) {
-    // Remove existing
-    hideConfirmBar();
+    // Remove existing strictly to prevent ID collisions
+    hideConfirmBar(true);
 
     const bar = createElement('div', { className: 'confirm-bar', id: 'confirm-bar' });
 
@@ -308,13 +308,18 @@ function showConfirmBar(container, senior, date, time, onReserved) {
 
 /**
  * Hide the confirmation bar
+ * @param {boolean} immediate - if true, remove immediately without animation
  */
-function hideConfirmBar() {
-    const bar = $('#confirm-bar');
-    if (bar) {
-        bar.classList.remove('active');
-        setTimeout(() => bar.remove(), 400);
-    }
+function hideConfirmBar(immediate = false) {
+    const bars = document.querySelectorAll('.confirm-bar'); // Select ALL
+    bars.forEach(bar => {
+        if (immediate) {
+            bar.remove();
+        } else {
+            bar.classList.remove('active');
+            setTimeout(() => bar.remove(), 400);
+        }
+    });
 }
 
 /**
