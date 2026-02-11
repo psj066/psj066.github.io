@@ -3,55 +3,58 @@
    ======================================== */
 
 :root {
-    /* Brand Colors (Warm & Cozy) */
-    --color-primary: #FFC947;
-    /* Softer Gold/Mustard */
-    --color-primary-light: #FFD460;
-    /* Soft Light Yellow (unchanged but compatible) */
-    --color-primary-dark: #E6A700;
-    /* Deep Gold */
-    --color-accent: #FF7F50;
-    /* Coral/Warm Orange */
-    --color-accent-light: #FFAB91;
-    /* Soft Coral */
+    /* Brand Colors (Summer Refresh) */
+    --color-primary: #00BCD4;
+    /* Cyan Blue (Sky) */
+    --color-primary-light: #80DEEA;
+    /* Soft Cyan */
+    --color-primary-dark: #0097A7;
+    /* Deep Cyan */
 
-    /* Warm Neutral Palette */
-    --color-bg: #FFFDF9;
-    /* Warm Cream Background */
-    --color-bg-elevated: #FFF8E7;
-    /* Soft Yellow Tint */
-    --color-bg-card: #FFFFFF;
-    /* White Card */
-    --color-bg-input: #FCFBF8;
-    /* Very Light Warm Grey/White */
-    --color-surface: #F9F5EB;
-    /* Light Beige */
-    --color-border: #E8DED2;
-    /* Soft Beige Border */
+    --color-accent: #76FF03;
+    /* Lime Green (Grass) */
+    --color-accent-light: #B2FF59;
+    /* Soft Lime */
 
-    /* Text (Soft Brown/Grey) */
-    --color-text: #4E4034;
-    /* Dark Brown */
-    --color-text-secondary: #8C7B6D;
-    /* Medium Brown */
-    --color-text-muted: #B0A69C;
-    /* Soft Grey-Brown */
+    /* Backgrounds (Sky & Glass) */
+    --color-bg: #E0F7FA;
+    /* Very light sky blue base */
+    --color-bg-elevated: rgba(255, 255, 255, 0.65);
+    /* Glass card bg */
+    --color-bg-card: rgba(255, 255, 255, 0.85);
+    /* Higher opacity glass */
+    --color-bg-input: rgba(255, 255, 255, 0.9);
+
+    --color-surface: #F1F8E9;
+    /* Light Green tint */
+    --color-border: rgba(255, 255, 255, 0.8);
+    /* Semi-transparent white border */
+
+    /* Text (Clean & Crisp) */
+    --color-text: #263238;
+    /* Blue Grey Dark */
+    --color-text-secondary: #546E7A;
+    /* Blue Grey Medium */
+    --color-text-muted: #90A4AE;
+    /* Blue Grey Light */
 
     /* Semantic */
-    --color-success: #6AB04C;
-    /* Soft Green */
-    --color-warning: #F9CA24;
-    /* Sunflower Yellow */
-    --color-danger: #EB4D4B;
+    --color-success: #4CAF50;
+    /* Green */
+    --color-warning: #FFCA28;
+    /* Amber */
+    --color-danger: #EF5350;
     /* Soft Red */
-    --color-info: #7ED6DF;
-    /* Soft Blue */
+    --color-info: #29B6F6;
+    /* Light Blue */
 
-    /* Gradients (Softer, Warmer) */
-    --gradient-primary: linear-gradient(135deg, #FFB900 0%, #FFD460 100%);
-    --gradient-accent: linear-gradient(135deg, #FF7F50 0%, #FFAB91 100%);
-    --gradient-card: linear-gradient(145deg, #FFFFFF 0%, #FFFDF9 100%);
-    --gradient-hero: linear-gradient(180deg, #FFFDF9 0%, #FFF8E7 100%);
+    /* Gradients (Summer Vibes) */
+    --gradient-primary: linear-gradient(135deg, #26C6DA 0%, #00BCD4 100%);
+    --gradient-accent: linear-gradient(135deg, #76FF03 0%, #64DD17 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+    --gradient-hero: linear-gradient(180deg, #E0F7FA 0%, #80DEEA 100%);
+    --gradient-sky: linear-gradient(to bottom, #4FC3F7, #E0F7FA);
+    /* Sky background */
 
     /* Typography */
     --font-family: 'Gowun Dodum', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -73,24 +76,27 @@
     --spacing-2xl: 3rem;
     --spacing-3xl: 4rem;
 
-    /* Border Radius (Rounder) */
-    --radius-sm: 8px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
-    --radius-xl: 32px;
+    /* Border Radius (Rounder for bubbles/clouds) */
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 28px;
+    --radius-xl: 40px;
     --radius-full: 9999px;
 
-    /* Shadows (Softer, Diffused) */
-    --shadow-sm: 0 2px 8px rgba(78, 64, 52, 0.05);
-    --shadow-md: 0 4px 16px rgba(78, 64, 52, 0.08);
-    --shadow-lg: 0 8px 32px rgba(78, 64, 52, 0.1);
-    --shadow-glow: 0 0 15px rgba(255, 185, 0, 0.3);
+    /* Shadows (Blue/Glass Tint) */
+    --shadow-sm: 0 4px 6px rgba(0, 188, 212, 0.1);
+    --shadow-md: 0 8px 16px rgba(0, 188, 212, 0.15);
+    --shadow-lg: 0 12px 32px rgba(0, 188, 212, 0.2);
+    --shadow-glow: 0 0 20px rgba(0, 188, 212, 0.4);
+    --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    /* Glassmorphism shadow */
 
     /* Transitions */
     --transition-fast: 150ms ease;
     --transition-base: 300ms ease;
     --transition-slow: 500ms ease;
-    --transition-spring: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Bouncy */
 
     /* Z-index layers */
     --z-base: 1;
@@ -98,4 +104,8 @@
     --z-nav: 100;
     --z-modal: 1000;
     --z-animation: 2000;
+
+    /* Glass Effect */
+    --glass-blur: blur(12px);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.7);
 }
