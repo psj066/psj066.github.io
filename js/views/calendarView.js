@@ -68,6 +68,19 @@ function buildFullProfile(senior, backBtn) {
     // Back Button (Integrated)
     topRow.appendChild(backBtn);
 
+    // Photo
+    if (senior.photo) {
+        const photo = createElement('img', {
+            src: senior.photo,
+            style: {
+                width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover',
+                marginRight: '12px', border: '2px solid var(--color-border)',
+                flexShrink: 0
+            }
+        });
+        topRow.appendChild(photo);
+    }
+
     // Name & Role
     const info = createElement('div');
     info.appendChild(createElement('div', {

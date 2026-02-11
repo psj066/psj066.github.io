@@ -404,7 +404,8 @@ function showSeniorForm(content, senior, pageContainer, onBack) {
         if (!file) return;
         try {
             const rawBase64 = await readImage(file);
-            const resizedBase64 = await resizeImage(rawBase64, 300, 0.8);
+            // Increased quality: 300px -> 800px, 0.8 -> 0.9
+            const resizedBase64 = await resizeImage(rawBase64, 800, 0.9);
             hiddenInput.value = resizedBase64;
             photoContainer.innerHTML = `<img src="${resizedBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
         } catch (err) {
