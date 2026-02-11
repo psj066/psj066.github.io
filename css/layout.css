@@ -125,11 +125,7 @@ body {
     }
 }
 
-@media (max-width: 480px) {
-    .profile-grid {
-        grid-template-columns: 1fr;
-    }
-}
+/* Removed 480px media query to allow 2 columns on small screens */
 
 /* Footer */
 .app-footer {
