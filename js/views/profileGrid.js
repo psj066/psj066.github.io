@@ -3,6 +3,7 @@
 // ========================================
 
 import { createElement, clearContainer } from '../utils/dom.js';
+import { getState } from '../state.js';
 
 /**
  * Render profile cards in a grid
