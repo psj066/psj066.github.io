@@ -16,7 +16,7 @@ export function renderProfileGrid(container, profiles, onCardSelect) {
 
     // Header
     const header = createElement('div', { className: 'anim-fade-in' },
-        createElement('h2', { className: 'view-title' }, '순장 프로필'),
+        createElement('h2', { className: 'view-title' }, '순모임 신청'),
         createElement('p', { className: 'view-subtitle' }, '만나고 싶은 순장님을 선택해주세요!')
     );
     container.appendChild(header);
