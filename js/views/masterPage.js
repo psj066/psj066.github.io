@@ -240,7 +240,8 @@ function renderSeniorAdminCard(senior, content, pageContainer, onBack, index) {
 
     const genderBadge = senior.gender === '여' ? '👩' : '👨';
     nameRow.appendChild(createElement('strong', {}, `${senior.name} ${genderBadge}`));
-    nameRow.appendChild(createElement('span', { className: 'senior-admin-card__role' }, senior.role));
+    // Role removed from UI
+    // nameRow.appendChild(createElement('span', { className: 'senior-admin-card__role' }, senior.role));
     info.appendChild(nameRow);
 
     if (senior.introduction) {
@@ -427,7 +428,8 @@ function showSeniorForm(content, senior, pageContainer, onBack) {
     form.appendChild(genderGroup);
 
     // Role
-    form.appendChild(createFormField('역할', 'text', 'senior-role', senior?.role || '', '예: 대표순장, 순원'));
+    // Role input removed from UI
+    // form.appendChild(createFormField('역할', 'text', 'senior-role', senior?.role || '', '예: 대표순장, 순원'));
     // Introduction
     const introGroup = createElement('div', { className: 'form-group' });
     introGroup.appendChild(createElement('label', { className: 'form-label' }, '소개'));
@@ -587,7 +589,7 @@ function createFormField(label, type, id, value, placeholder) {
 
 function handleSeniorFormSubmit(existingSenior, pageContainer, onBack) {
     const name = $('#senior-name')?.value.trim();
-    const role = $('#senior-role')?.value.trim();
+    const role = '순장'; // Dummy data for DB compatibility
     const introduction = $('#senior-intro')?.value.trim();
     const photo = $('#senior-photo-data')?.value;
     const gender = document.querySelector('.senior-form input[name="senior-gender"]:checked')?.value || '남';
