@@ -501,9 +501,30 @@
 }
 
 .reservation-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
     gap: var(--spacing-md);
+    overflow-x: auto;
+    padding-bottom: var(--spacing-md);
+    /* Space for scrollbar */
+    padding-right: var(--spacing-md);
+    /* End padding */
+
+    /* Smooth scrolling */
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+
+    /* Scrollbar styling for desktop */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+/* Ensure cards take fixed width in horizontal mode */
+.reservation-list .reservation-card {
+    flex: 0 0 300px;
+    /* Fixed width */
+    min-width: 300px;
+    scroll-snap-align: start;
 }
 
 .reservation-card {
