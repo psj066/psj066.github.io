@@ -71,12 +71,12 @@ export function createProfileCard(senior) {
     // Fallback for missing images
     img.onerror = function () {
         this.style.display = 'none';
-        // imgWrapper.style.background = `linear-gradient(135deg, #FFB900, #FFD460)`; // Removed for Glassmorphism
+        imgWrapper.style.background = '#ffffff'; // Simple White
         imgWrapper.style.display = 'flex';
         imgWrapper.style.alignItems = 'center';
         imgWrapper.style.justifyContent = 'center';
         const initial = createElement('span', {
-            style: { fontSize: '3rem', color: '#fff', fontWeight: '700' },
+            style: { fontSize: '3rem', color: 'var(--color-primary-dark)', fontWeight: '700' }, // Dark text
         }, senior.name.charAt(0));
         imgWrapper.appendChild(initial);
     };

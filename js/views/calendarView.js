@@ -69,17 +69,36 @@ function buildFullProfile(senior, backBtn) {
     topRow.appendChild(backBtn);
 
     // Photo
+    // Photo with Fallback
+    const photoContainer = createElement('div', {
+        style: {
+            width: '60px', height: '60px', borderRadius: '50%',
+            marginRight: '12px', border: '2px solid var(--color-border)',
+            flexShrink: 0, overflow: 'hidden',
+            background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }
+    });
+
     if (senior.photo) {
         const photo = createElement('img', {
             src: senior.photo,
-            style: {
-                width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover',
-                marginRight: '12px', border: '2px solid var(--color-border)',
-                flexShrink: 0
-            }
+            style: { width: '100%', height: '100%', objectFit: 'cover' }
         });
-        topRow.appendChild(photo);
+        photo.onerror = function () {
+            this.style.display = 'none';
+            const initial = createElement('span', {
+                style: { fontSize: '1.5rem', color: 'var(--color-primary-dark)', fontWeight: '700' },
+            }, senior.name.charAt(0));
+            photoContainer.appendChild(initial);
+        };
+        photoContainer.appendChild(photo);
+    } else {
+        const initial = createElement('span', {
+            style: { fontSize: '1.5rem', color: 'var(--color-primary-dark)', fontWeight: '700' },
+        }, senior.name.charAt(0));
+        photoContainer.appendChild(initial);
     }
+    topRow.appendChild(photoContainer);
 
     // Name & Role
     const info = createElement('div');
