@@ -162,9 +162,28 @@ export function isSlotBooked(seniorId, date, time) {
  * Get the current user's reservation (if any)
  * matches by studentId
  */
+// ... (getUserReservation above)
 export function getUserReservation() {
     if (!state.applicant || !state.applicant.studentId) return null;
     return state.reservations.find(r => r.applicant && r.applicant.studentId === state.applicant.studentId);
+}
+
+/**
+ * Find latest applicant info by studentId from history
+ * @param {string} studentId
+ * @returns {Object|null}
+ */
+export function findApplicantHistory(studentId) {
+    if (!studentId) return null;
+    // Sort by date descending to get latest
+    const matches = state.reservations
+        .filter(r => r.applicant && r.applicant.studentId === studentId)
+        .sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+    if (matches.length > 0) {
+        return matches[0].applicant; // Return the applicant object
+    }
+    return null;
 }
 
 
