@@ -140,39 +140,81 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-xl);
+    padding: 12px 24px;
     border-radius: var(--radius-full);
     font-weight: 600;
     font-size: var(--font-size-base);
-    transition: all var(--transition-fast);
+    transition: all var(--transition-base);
     cursor: pointer;
     border: none;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
+
+.btn:active {
+    transform: scale(0.96);
 }
 
 .btn-primary {
     background: var(--gradient-primary);
-    color: #fff;
-    box-shadow: var(--shadow-sm);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 6px 16px rgba(0, 188, 212, 0.4);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-glow), var(--shadow-md);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
 }
 
 .btn-secondary {
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border);
-    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--color-primary-dark);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
 }
 
-.btn-secondary:hover {
-    background: var(--color-surface);
-    border-color: var(--color-primary-light);
+.btn-secondary:hover:not(:disabled) {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-primary);
+}
+
+.btn-danger {
+    background: #FFEBEE;
+    color: var(--color-danger);
+}
+
+.btn-danger:hover {
+    background: #FFCDD2;
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--color-text-secondary);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+    margin-bottom: var(--spacing-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    width: auto;
+}
+
+.btn-back:hover {
+    background: white;
+    color: var(--color-primary);
+    text-decoration: none;
 }
 
 .btn-full {
@@ -181,33 +223,37 @@
 
 /* ---- Profile Card ---- */
 .profile-card {
-    background: var(--gradient-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: var(--color-bg-elevated);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
     position: relative;
+    cursor: pointer;
+    transition: all var(--transition-spring);
+    box-shadow: var(--shadow-glass);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 0;
-    /* Remove default padding, content handles it */
 }
 
 .profile-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 188, 212, 0.2);
+    border-color: rgba(255, 255, 255, 0.8);
 }
 
 .profile-card__image-wrapper {
     aspect-ratio: 1;
     overflow: hidden;
     background: var(--color-surface);
+    position: relative;
 }
 
 .profile-card__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-base);
+    transition: transform var(--transition-slow);
 }
 
 .profile-card:hover .profile-card__image {
@@ -215,32 +261,29 @@
 }
 
 .profile-card__info {
-    padding: var(--spacing-md);
+    padding: 16px;
 }
 
 .profile-card__name {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-md);
     font-weight: 700;
-    margin-bottom: var(--spacing-xs);
+    color: var(--color-text);
+    margin-bottom: 4px;
 }
 
 .profile-card__role {
-    font-size: var(--font-size-xs);
-    color: var(--color-accent);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--spacing-sm);
+    display: none;
 }
 
 .profile-card__intro {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    line-height: 1.5;
+    line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    height: 2.8em;
 }
 
 /* ---- Mini Profile (Removed / Deprecated) ---- */
