@@ -57,11 +57,19 @@ async function initApp() {
         currentView = 'profileGrid';
     }
 
-    // Master page button (password-protected)
+    // Master page button (password-protected with persistence)
     const masterBtn = $('#btn-master-page');
     masterBtn.addEventListener('click', () => {
+        const isAdmin = localStorage.getItem('ccc_admin_auth') === 'true';
+
+        if (isAdmin) {
+            navigateTo('masterPage');
+            return;
+        }
+
         const password = prompt('관리자 비밀번호를 입력하세요:');
         if (password === '1984') {
+            localStorage.setItem('ccc_admin_auth', 'true');
             navigateTo('masterPage');
         } else if (password !== null) {
             alert('비밀번호가 올바르지 않습니다.');
