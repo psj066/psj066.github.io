@@ -34,10 +34,10 @@ export function renderCalendarView(container, seniorId, onBack, onReserved) {
         onClick: onBack,
     }, '←');
 
-    // Header container (Nav + Mini Profile)
-    // We inject the back button into the mini profile for a unified sticky header
-    const sidebar = buildMiniProfile(senior, backBtn);
-    container.appendChild(sidebar);
+    // Header container (Nav + Full Profile)
+    // Replaced sticky mini-profile with static full profile
+    const profileSection = buildFullProfile(senior, backBtn);
+    container.appendChild(profileSection);
 
     // Calendar
     const calendar = buildCalendar(senior);
@@ -48,21 +48,52 @@ export function renderCalendarView(container, seniorId, onBack, onReserved) {
 }
 
 /**
- * Build the mini profile sidebar (Sticky Header)
+ * Build the Full Profile (Static at top)
+ * Shows full intro unlike the grid view.
  */
-function buildMiniProfile(senior, backBtn) {
-    const wrapper = createElement('div', { className: 'mini-profile' });
+function buildFullProfile(senior, backBtn) {
+    const wrapper = createElement('div', {
+        className: 'calendar-profile-header',
+        style: {
+            marginBottom: 'var(--spacing-lg)',
+            padding: 'var(--spacing-md)',
+            background: 'var(--gradient-card)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)'
+        }
+    });
 
-    const leftGroup = createElement('div', { style: { display: 'flex', alignItems: 'center' } });
-    leftGroup.appendChild(backBtn);
+    const topRow = createElement('div', { style: { display: 'flex', alignItems: 'center', marginBottom: '12px' } });
 
-    const info = createElement('div', { className: 'mini-profile__info' });
-    info.appendChild(createElement('div', { className: 'mini-profile__name' }, senior.name));
-    // Role removed
-    // info.appendChild(createElement('div', { className: 'mini-profile__role' }, senior.role));
-    leftGroup.appendChild(info);
+    // Back Button (Integrated)
+    topRow.appendChild(backBtn);
 
-    wrapper.appendChild(leftGroup);
+    // Name & Role
+    const info = createElement('div');
+    info.appendChild(createElement('div', {
+        style: { fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-text)' }
+    }, senior.name));
+    // info.appendChild(createElement('div', { className: 'mini-profile__role' }, senior.role)); // Role Hidden
+    topRow.appendChild(info);
+
+    wrapper.appendChild(topRow);
+
+    // Full Introduction
+    if (senior.introduction) {
+        const intro = createElement('div', {
+            style: {
+                fontSize: '0.95rem',
+                color: 'var(--color-text-secondary)',
+                lineHeight: '1.6',
+                whiteSpace: 'pre-wrap', // Preserve line breaks
+                padding: 'var(--spacing-sm)',
+                background: 'var(--color-bg-elevated)',
+                borderRadius: 'var(--radius-sm)'
+            }
+        }, senior.introduction);
+        wrapper.appendChild(intro);
+    }
+
     return wrapper;
 }
 

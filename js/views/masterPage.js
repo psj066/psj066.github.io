@@ -174,9 +174,19 @@ function renderReservationCard(reservation) {
         card.appendChild(applicantInfo);
 
         const detail = `${reservation.applicant.studentId} · ${reservation.applicant.gender} · ${reservation.applicant.age}세`;
-        card.appendChild(createElement('div', { className: 'reservation-card__applicant-detail' },
-            detail
-        ));
+        card.appendChild(createElement('div', { className: 'reservation-card__applicant-detail' }, detail));
+
+        // Display Applicant Intro
+        if (reservation.applicant.introduction) {
+            card.appendChild(createElement('div', {
+                className: 'reservation-card__applicant-intro',
+                style: {
+                    fontSize: '13px', color: 'var(--color-text-secondary)', marginTop: '8px',
+                    padding: '8px', background: 'var(--color-bg-elevated)', borderRadius: '4px',
+                    fontStyle: 'italic', lineHeight: '1.4'
+                }
+            }, `"${reservation.applicant.introduction}"`));
+        }
     }
 
     return card;
