@@ -4,7 +4,6 @@
 // ========================================
 
 import { $, createElement, clearContainer } from '../utils/dom.js';
-import { getReservations, deleteReservation } from '../state.js';
 import { getSeniorById, getSeniorProfiles, addSenior, updateSenior, deleteSenior, loadSeniors } from '../data.js';
 import { getReservations, deleteReservation, loadState } from '../state.js';
 import { formatDate } from '../utils/date.js';
