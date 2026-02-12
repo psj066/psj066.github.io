@@ -120,49 +120,56 @@ function getReservations() {
 }
 
 function addReservation(payload) {
-    // 1. Check Date Validity
-    // payload.date format: "YYYY-MM-DD"
-    // Create date object at midnight for comparison
-    const reqDate = new Date(payload.date + 'T00:00:00+09:00');
-    if (reqDate > DEADLINE_DATE) {
-        return { status: 'error', message: 'Application period ended for this date' };
+    const lock = LockService.getScriptLock();
+    try {
+        lock.waitLock(10000); // Wait up to 10 seconds for other requests to finish
+    } catch (e) {
+        return { status: 'error', message: 'Server is busy. Please try again.' };
     }
 
-    // (Optional: Check if payload.date is in the past or invalid range?)
-    // For now, only checking upper bound as requested.
-
-    const sheet = getSheet(SHEET_RESERVATIONS);
-
-    const data = sheet.getDataRange().getValues();
-
-    // 2. Check Capacity (Max 3)
-    // payload.seniorId needed
-    let count = 0;
-    // skip header (row index 0)
-    for (let i = 1; i < data.length; i++) {
-        if (data[i][0] == payload.seniorId) {
-            count++;
+    try {
+        // 1. Check Date Validity
+        // payload.date format: "YYYY-MM-DD"
+        const reqDate = new Date(payload.date + 'T00:00:00+09:00');
+        if (reqDate > DEADLINE_DATE) {
+            return { status: 'error', message: 'Application period ended for this date' };
         }
+
+        const sheet = getSheet(SHEET_RESERVATIONS);
+        const data = sheet.getDataRange().getValues();
+
+        // 2. Check Capacity (Max 3)
+        // payload.seniorId needed
+        let count = 0;
+        // skip header (row index 0)
+        for (let i = 1; i < data.length; i++) {
+            if (data[i][0] == payload.seniorId) {
+                count++;
+            }
+        }
+
+        if (count >= 3) {
+            return { status: 'error', message: 'Senior is full (Max 3)' };
+        }
+
+        // payload: { seniorId, date, time, applicant: { ... } }
+
+        sheet.appendRow([
+            payload.seniorId,
+            payload.date,
+            payload.time,
+            JSON.stringify(payload.applicant),
+            new Date().toISOString()
+        ]);
+
+        // Also save distinct applicant info
+        saveApplicant(payload.applicant);
+
+        return { status: 'created' };
+
+    } finally {
+        lock.releaseLock();
     }
-
-    if (count >= 3) {
-        return { status: 'error', message: 'Senior is full (Max 3)' };
-    }
-
-    // payload: { seniorId, date, time, applicant: { ... } }
-
-    sheet.appendRow([
-        payload.seniorId,
-        payload.date,
-        payload.time,
-        JSON.stringify(payload.applicant),
-        new Date().toISOString()
-    ]);
-
-    // Also save distinct applicant info
-    saveApplicant(payload.applicant);
-
-    return { status: 'created' };
 }
 
 
