@@ -9,7 +9,7 @@ import { getAvailableSlots, getSeniorById } from '../data.js';
 import { addReservation, isSlotBooked, getUserReservation, deleteReservation, getState, getReservations } from '../state.js';
 
 const CALENDAR_START = '2026-02-22';
-const CALENDAR_END = '2026-03-07';
+const CALENDAR_END = '2026-03-01';
 
 /**
  * Render the calendar view for a specific senior

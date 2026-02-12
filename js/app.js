@@ -11,7 +11,8 @@ import { renderProfileGrid } from './views/profileGrid.js';
 import { renderCalendarView } from './views/calendarView.js';
 import { renderAdminPage } from './views/admin/AdminMain.js';
 
-import { APP_VERSION, APPLICATION_DEADLINE } from './config.js';
+import { APP_VERSION } from './config.js';
+
 
 import { initSparkles } from './effects.js'; // Import effects
 
@@ -51,19 +52,8 @@ async function initApp() {
         loading.remove();
     }
 
-    // Check Deadline
-    const today = new Date();
-    // Set deadline to end of that day (23:59:59)
-    const deadline = new Date(APPLICATION_DEADLINE);
-    deadline.setHours(23, 59, 59, 999);
-
-    if (today > deadline) {
-        // Application Closed
-        renderApplicationClosed();
-        return;
-    }
-
     const state = getState();
+
 
 
     // If applicant already filled in, go to grid

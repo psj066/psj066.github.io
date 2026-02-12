@@ -120,13 +120,19 @@ function getReservations() {
 }
 
 function addReservation(payload) {
-    // 1. Check Deadline
-    const now = new Date();
-    if (now > DEADLINE_DATE) {
-        return { status: 'error', message: 'Application period has ended' };
+    // 1. Check Date Validity
+    // payload.date format: "YYYY-MM-DD"
+    // Create date object at midnight for comparison
+    const reqDate = new Date(payload.date + 'T00:00:00+09:00');
+    if (reqDate > DEADLINE_DATE) {
+        return { status: 'error', message: 'Application period ended for this date' };
     }
 
+    // (Optional: Check if payload.date is in the past or invalid range?)
+    // For now, only checking upper bound as requested.
+
     const sheet = getSheet(SHEET_RESERVATIONS);
+
     const data = sheet.getDataRange().getValues();
 
     // 2. Check Capacity (Max 3)
