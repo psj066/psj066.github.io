@@ -3,7 +3,8 @@
 // ========================================
 
 import { createElement, clearContainer } from '../utils/dom.js';
-import { getState } from '../state.js';
+import { getState, getReservations } from '../state.js';
+
 
 /**
  * Render profile cards in a grid
@@ -39,27 +40,48 @@ export function renderProfileGrid(container, profiles, onCardSelect) {
     // Grid
     const grid = createElement('div', { className: 'profile-grid stagger-children' });
 
+    // Calculate reservation counts
+    const allReservations = getReservations();
+    const reservationCounts = {};
+    allReservations.forEach(r => {
+        const sid = r.seniorId;
+        reservationCounts[sid] = (reservationCounts[sid] || 0) + 1;
+    });
+
     filteredProfiles.forEach((senior) => {
-        const card = createProfileCard(senior);
-        card.addEventListener('click', () => {
-            onCardSelect(senior.id, card);
-        });
+        const count = reservationCounts[senior.id] || 0;
+        const isFull = count >= 3;
+
+        const card = createProfileCard(senior, isFull, count);
+
+        if (!isFull) {
+            card.addEventListener('click', () => {
+                onCardSelect(senior.id, card);
+            });
+        }
         grid.appendChild(card);
     });
+
 
     container.appendChild(grid);
 }
 
+
 /**
  * Create a single profile card element
  * @param {Object} senior
+ * @param {boolean} isFull
+ * @param {number} count
  * @returns {HTMLElement}
  */
-export function createProfileCard(senior) {
+export function createProfileCard(senior, isFull = false, count = 0) {
+
     const card = createElement('div', {
-        className: 'profile-card',
+        className: `profile-card ${isFull ? 'disabled' : ''}`,
         dataset: { seniorId: senior.id },
+        style: isFull ? { opacity: '0.6', cursor: 'not-allowed', filter: 'grayscale(1)' } : {}
     });
+
 
     // Image
     const imgWrapper = createElement('div', { className: 'profile-card__image-wrapper' });
@@ -81,7 +103,21 @@ export function createProfileCard(senior) {
         imgWrapper.appendChild(initial);
     };
     imgWrapper.appendChild(img);
+    // Overlay for Full
+    if (isFull) {
+        const overlay = createElement('div', {
+            style: {
+                position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(0,0,0,0.4)', borderRadius: 'inherit',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: '1.2rem', fontWeight: 'bold', zIndex: 10
+            }
+        }, '마감됨');
+        imgWrapper.appendChild(overlay);
+    }
+
     card.appendChild(imgWrapper);
+
 
     // Info
     const info = createElement('div', { className: 'profile-card__info' });

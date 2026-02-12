@@ -18,6 +18,10 @@ const SHEET_SENIORS = 'Seniors';
 const SHEET_RESERVATIONS = 'Reservations';
 const SHEET_APPLICANTS = 'Applicants';
 
+// DEADLINE (March 1st, 2026, 23:59:59 KST)
+const DEADLINE_DATE = new Date('2026-03-02T00:00:00+09:00'); // Midnight of March 2nd = End of March 1st
+
+
 /**
  * Handle GET requests
  * Action types: 'getSeniors', 'getReservations'
@@ -116,7 +120,28 @@ function getReservations() {
 }
 
 function addReservation(payload) {
+    // 1. Check Deadline
+    const now = new Date();
+    if (now > DEADLINE_DATE) {
+        return { status: 'error', message: 'Application period has ended' };
+    }
+
     const sheet = getSheet(SHEET_RESERVATIONS);
+    const data = sheet.getDataRange().getValues();
+
+    // 2. Check Capacity (Max 3)
+    // payload.seniorId needed
+    let count = 0;
+    // skip header (row index 0)
+    for (let i = 1; i < data.length; i++) {
+        if (data[i][0] == payload.seniorId) {
+            count++;
+        }
+    }
+
+    if (count >= 3) {
+        return { status: 'error', message: 'Senior is full (Max 3)' };
+    }
 
     // payload: { seniorId, date, time, applicant: { ... } }
 
@@ -133,6 +158,7 @@ function addReservation(payload) {
 
     return { status: 'created' };
 }
+
 
 function deleteReservation(payload) {
     const sheet = getSheet(SHEET_RESERVATIONS);

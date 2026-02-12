@@ -2,11 +2,11 @@
 // View: Calendar — booking time slots
 // ========================================
 
-import { $, createElement, clearContainer } from '../utils/dom.js';
+import { createElement, clearContainer, $ } from '../utils/dom.js';
 import { getDateRange, formatDate, isWeekend, toDateString } from '../utils/date.js';
 import { showToast } from '../utils/animation.js';
 import { getAvailableSlots, getSeniorById } from '../data.js';
-import { addReservation, isSlotBooked, getUserReservation, deleteReservation } from '../state.js';
+import { addReservation, isSlotBooked, getUserReservation, deleteReservation, getState, getReservations } from '../state.js';
 
 const CALENDAR_START = '2026-02-22';
 const CALENDAR_END = '2026-03-07';
@@ -16,13 +16,26 @@ const CALENDAR_END = '2026-03-07';
  * @param {HTMLElement} container
  * @param {string} seniorId
  * @param {Function} onBack - called when user clicks back
- * @param {Function} onReserved - called after a reservation is made
+ * @param {Function} onComplete - called after a reservation is made
  */
-export function renderCalendarView(container, seniorId, onBack, onReserved) {
+export function renderCalendarView(container, seniorId, onBack, onComplete) {
     clearContainer(container);
 
     const senior = getSeniorById(seniorId);
-    if (!senior) return;
+    if (!senior) {
+        alert('잘못된 접근입니다.');
+        onBack();
+        return;
+    }
+
+    // Safety Check: Max 3 Applicants
+    const allReservations = getReservations();
+    const count = allReservations.filter(r => r.seniorId === seniorId).length;
+    if (count >= 3) {
+        alert('이 순장님은 이미 신청이 마감되었습니다. (최대 3명)');
+        onBack();
+        return;
+    }
 
     // Back button (Icon)
     const backBtn = createElement('button', {
@@ -44,7 +57,7 @@ export function renderCalendarView(container, seniorId, onBack, onReserved) {
     container.appendChild(calendar);
 
     // Bind time slot clicks
-    bindTimeSlotEvents(container, senior, onReserved);
+    bindTimeSlotEvents(container, senior, onComplete);
 }
 
 /**
@@ -293,9 +306,9 @@ function showConfirmBar(container, senior, date, time, onReserved) {
     // 2-line info
     const infoDiv = createElement('div', { className: 'confirm-bar__info' });
     infoDiv.innerHTML = `
-        <div style="font-weight:bold; color:var(--color-text); font-size:16px;">${senior.name} 순장</div>
-        <div style="color:var(--color-primary-dark); font-size:14px; margin-top:2px;">${displayDate} ${time}</div>
-    `;
+    <div style="font-weight:bold; color:var(--color-text); font-size:16px;">${senior.name} 순장</div>
+    <div style="color:var(--color-primary-dark); font-size:14px; margin-top:2px;">${displayDate} ${time}</div>
+`;
     bar.appendChild(infoDiv);
 
     const btnGroup = createElement('div', { className: 'confirm-bar__actions' });
