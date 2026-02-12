@@ -57,7 +57,9 @@ export function renderCalendarView(container, seniorId, onBack, onComplete) {
     container.appendChild(calendar);
 
     // Bind time slot clicks
-    bindTimeSlotEvents(container, senior, onComplete);
+    // Use 'calendar' element so listeners are removed when view is cleared
+    bindTimeSlotEvents(calendar, senior, onComplete);
+
 }
 
 /**

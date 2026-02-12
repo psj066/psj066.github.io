@@ -129,7 +129,7 @@ async function navigateTo(viewName, params = {}) {
                 container,
                 params.seniorId,
                 () => navigateTo('profileGrid'),
-                () => { }
+                () => navigateTo('profileGrid') // onComplete: Go back to grid
             );
             break;
         }
