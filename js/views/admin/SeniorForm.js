@@ -11,7 +11,7 @@ import { renderAdminPage } from './AdminMain.js';
 
 // Configuration
 const CALENDAR_START = '2026-02-22';
-const CALENDAR_END = '2026-03-07';
+const CALENDAR_END = '2026-03-01';
 const TIME_START = '09:30';
 const TIME_END = '23:00';
 const TIME_INTERVAL = 30;
