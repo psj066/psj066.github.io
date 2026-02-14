@@ -104,7 +104,8 @@ function renderReservationCard(reservation, contentContainer) {
 
         card.appendChild(applicantInfo);
 
-        const detail = `${reservation.applicant.studentId} · ${reservation.applicant.gender} · ${reservation.applicant.age}세`;
+        const gospelInfo = reservation.applicant.gospel ? ` · ✝️복음: ${reservation.applicant.gospel}` : '';
+        const detail = `${reservation.applicant.studentId} · ${reservation.applicant.gender} · ${reservation.applicant.age}세${gospelInfo}`;
         card.appendChild(createElement('div', { className: 'reservation-card__applicant-detail' }, detail));
 
         if (reservation.applicant.introduction) {

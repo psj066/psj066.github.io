@@ -224,6 +224,7 @@ function saveApplicant(applicant) {
         applicant.name,
         applicant.age,
         applicant.gender,
+        applicant.gospel || '',
         applicant.introduction,
         '', // Photo column empty
         new Date().toISOString()
@@ -357,5 +358,5 @@ function setup() {
     if (s2.getLastRow() === 0) s2.appendRow(['SeniorID', 'Date', 'Time', 'ApplicantJSON', 'CreatedAt']);
 
     let s3 = getSheet(SHEET_APPLICANTS);
-    if (s3.getLastRow() === 0) s3.appendRow(['StudentID', 'Name', 'Age', 'Gender', 'Introduction', 'Photo', 'CreatedAt']);
+    if (s3.getLastRow() === 0) s3.appendRow(['StudentID', 'Name', 'Age', 'Gender', 'Gospel', 'Introduction', 'Photo', 'CreatedAt']);
 }

@@ -7,7 +7,7 @@ import { fetchFromApi, postToApi } from './utils/api.js';
 const STORAGE_KEY = 'ccc_sun_profile';
 
 let state = {
-    applicant: null,       // { studentId, age, gender, introduction } -> Kept in localStorage
+    applicant: null,       // { studentId, age, gender, gospel, introduction } -> Kept in localStorage
     reservations: [],      // [{ applicant, seniorId, date, time, createdAt }] -> Fetched from API
     currentView: 'applicantForm',
 };
@@ -55,6 +55,7 @@ export function saveState() {
             studentId: state.applicant.studentId,
             age: state.applicant.age,
             gender: state.applicant.gender,
+            gospel: state.applicant.gospel,
             introduction: state.applicant.introduction
         } : null;
 

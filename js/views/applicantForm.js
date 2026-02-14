@@ -107,6 +107,21 @@ function renderStep2(container, studentId, existingData, onComplete) {
         </div>
 
         <div class="form-group">
+          <label class="form-label">복음을 아시나요? *</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" name="gospel" id="gospel-yes" value="예" ${existingData?.gospel === '예' ? 'checked' : ''}>
+              <label for="gospel-yes">예</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="gospel" id="gospel-no" value="아니오" ${existingData?.gospel === '아니오' ? 'checked' : ''}>
+              <label for="gospel-no">아니오</label>
+            </div>
+          </div>
+          <div class="form-error" id="error-gospel">복음 인지 여부를 선택해주세요.</div>
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="input-intro">간단한 소개</label>
           <textarea class="form-textarea" id="input-intro" placeholder="MBTI, 관심사 등 간단한 소개를 적어주세요!" rows="3">${existingData?.introduction || ''}</textarea>
         </div>
@@ -144,13 +159,14 @@ function handleSubmit(container, onComplete) {
     studentId: $('#input-studentId', container).value.trim(),
     age: parseInt($('#input-age', container).value, 10),
     gender: container.querySelector('input[name="gender"]:checked')?.value || '',
+    gospel: container.querySelector('input[name="gospel"]:checked')?.value || '',
     introduction: $('#input-intro', container).value.trim(),
   };
 
   const validation = validateForm(formData);
 
   // Clear all errors
-  ['name', 'studentId', 'age', 'gender'].forEach((field) => {
+  ['name', 'studentId', 'age', 'gender', 'gospel'].forEach((field) => {
     const input = $(`#input-${field}`, container) || $(`#error-${field}`, container)?.previousElementSibling;
     const error = $(`#error-${field}`, container);
     if (input && input.classList) input.classList.remove('error');
@@ -195,6 +211,10 @@ export function validateForm(formData) {
 
   if (!formData.gender) {
     errors.push('gender');
+  }
+
+  if (!formData.gospel) {
+    errors.push('gospel');
   }
 
   return { valid: errors.length === 0, errors };
