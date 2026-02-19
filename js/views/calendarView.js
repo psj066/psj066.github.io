@@ -28,11 +28,11 @@ export function renderCalendarView(container, seniorId, onBack, onComplete) {
         return;
     }
 
-    // Safety Check: Max 3 Applicants
+    // Safety Check: Max 2 Applicants
     const allReservations = getReservations();
     const count = allReservations.filter(r => r.seniorId === seniorId).length;
-    if (count >= 3) {
-        alert('이 순장님은 이미 신청이 마감되었습니다. (최대 3명)');
+    if (count >= 2) {
+        alert('이 순장님은 이미 신청이 마감되었습니다. (최대 2명)');
         onBack();
         return;
     }

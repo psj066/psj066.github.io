@@ -187,6 +187,22 @@ export function findApplicantHistory(studentId) {
     return null;
 }
 
+/**
+ * Fetch applicant info from server by studentId (cross-device support)
+ * @param {string} studentId
+ * @returns {Promise<Object|null>}
+ */
+export async function fetchApplicantByStudentId(studentId) {
+    if (!studentId) return null;
+    try {
+        const data = await fetchFromApi('getApplicant', { studentId });
+        return data || null;
+    } catch (e) {
+        console.warn('Failed to fetch applicant by studentId:', e);
+        return null;
+    }
+}
+
 
 /**
  * Clear all state (for debugging)

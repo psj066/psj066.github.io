@@ -33,6 +33,8 @@ function doGet(e) {
         return success(getSeniors());
     } else if (action === 'getReservations') {
         return success(getReservations());
+    } else if (action === 'getApplicant') {
+        return success(getApplicantByStudentId(e.parameter.studentId));
     }
 
     return error('Invalid action');
@@ -138,7 +140,7 @@ function addReservation(payload) {
         const sheet = getSheet(SHEET_RESERVATIONS);
         const data = sheet.getDataRange().getValues();
 
-        // 2. Check Capacity (Max 3)
+        // 2. Check Capacity (Max 2)
         // payload.seniorId needed
         let count = 0;
         // skip header (row index 0)
@@ -148,8 +150,8 @@ function addReservation(payload) {
             }
         }
 
-        if (count >= 3) {
-            return { status: 'error', message: 'Senior is full (Max 3)' };
+        if (count >= 2) {
+            return { status: 'error', message: 'Senior is full (Max 2)' };
         }
 
         // payload: { seniorId, date, time, applicant: { ... } }
@@ -201,7 +203,8 @@ function deleteReservation(payload) {
 }
 
 /**
- * Save applicant to Applicants sheet if not exists (by StudentID)
+ * Save applicant to Applicants sheet (upsert by StudentID)
+ * If exists, update the row. If not, append new.
  */
 function saveApplicant(applicant) {
     if (!applicant || !applicant.studentId) return;
@@ -213,7 +216,13 @@ function saveApplicant(applicant) {
     // Start from 1 to skip header
     for (let i = 1; i < data.length; i++) {
         if (data[i][0] == applicant.studentId) {
-            // Already exists
+            // Update existing row
+            sheet.getRange(i + 1, 2).setValue(applicant.name);
+            sheet.getRange(i + 1, 3).setValue(applicant.age);
+            sheet.getRange(i + 1, 4).setValue(applicant.gender);
+            sheet.getRange(i + 1, 5).setValue(applicant.gospel || '');
+            sheet.getRange(i + 1, 6).setValue(applicant.introduction);
+            sheet.getRange(i + 1, 8).setValue(new Date().toISOString()); // Update timestamp
             return;
         }
     }
@@ -229,6 +238,32 @@ function saveApplicant(applicant) {
         '', // Photo column empty
         new Date().toISOString()
     ]);
+}
+
+/**
+ * Get applicant info by StudentID from the Applicants sheet
+ * @param {string} studentId
+ * @returns {Object|null}
+ */
+function getApplicantByStudentId(studentId) {
+    if (!studentId) return null;
+
+    const sheet = getSheet(SHEET_APPLICANTS);
+    const data = sheet.getDataRange().getValues();
+
+    for (let i = 1; i < data.length; i++) {
+        if (data[i][0] == studentId) {
+            return {
+                studentId: data[i][0],
+                name: data[i][1],
+                age: data[i][2],
+                gender: data[i][3],
+                gospel: data[i][4],
+                introduction: data[i][5]
+            };
+        }
+    }
+    return null;
 }
 
 function addSenior(payload) {

@@ -3,7 +3,7 @@
 // ========================================
 
 import { $, createElement, clearContainer } from '../utils/dom.js';
-import { setState, getState, findApplicantHistory } from '../state.js';
+import { setState, getState, findApplicantHistory, fetchApplicantByStudentId } from '../state.js';
 
 /**
  * Render the applicant information form
@@ -35,14 +35,14 @@ function renderStep1(container, defaultId, onComplete) {
           <input class="form-input" type="text" id="input-check-studentId" placeholder="예: 20260001" value="${defaultId}" required>
           <div class="form-error" id="error-check-studentId">학번을 입력해주세요.</div>
         </div>
-        <button type="submit" class="btn btn-primary btn-full">다음 →</button>
+        <button type="submit" class="btn btn-primary btn-full" id="btn-step1-submit">다음 →</button>
       </form>
     </div>
     `;
 
   container.innerHTML = html;
 
-  $('#step1-form', container).addEventListener('submit', (e) => {
+  $('#step1-form', container).addEventListener('submit', async (e) => {
     e.preventDefault();
     const studentId = $('#input-check-studentId', container).value.trim();
     if (!studentId || studentId.length < 2) {
@@ -54,13 +54,24 @@ function renderStep1(container, defaultId, onComplete) {
     // Cache ID
     localStorage.setItem('ccc_last_student_id', studentId);
 
-    // Lookup
-    const history = findApplicantHistory(studentId);
+    // Show loading state
+    const submitBtn = $('#btn-step1-submit', container);
+    submitBtn.disabled = true;
+    submitBtn.textContent = '조회 중...';
+
+    // 1. Try local reservation history first
+    let history = findApplicantHistory(studentId);
+
+    // 2. If not found locally, fetch from server (cross-device support)
+    if (!history) {
+      history = await fetchApplicantByStudentId(studentId);
+    }
 
     // Go to Step 2
     renderStep2(container, studentId, history, onComplete);
   });
 }
+
 
 function renderStep2(container, studentId, existingData, onComplete) {
   clearContainer(container);
