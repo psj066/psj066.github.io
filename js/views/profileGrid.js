@@ -50,7 +50,7 @@ export function renderProfileGrid(container, profiles, onCardSelect) {
 
     filteredProfiles.forEach((senior) => {
         const count = reservationCounts[senior.id] || 0;
-        const isFull = count >= 3;
+        const isFull = count >= 2;
 
         const card = createProfileCard(senior, isFull, count);
 
