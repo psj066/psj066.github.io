@@ -3,7 +3,7 @@
 // ========================================
 
 import { $, createElement, clearContainer } from '../utils/dom.js';
-import { setState, getState, findApplicantHistory, fetchApplicantByStudentId } from '../state.js';
+import { setState, getState, findApplicantHistory, fetchApplicantByStudentId, saveApplicantToServer } from '../state.js';
 
 /**
  * Render the applicant information form
@@ -197,6 +197,7 @@ function handleSubmit(container, onComplete) {
 
   // Save and navigate
   setState('applicant', formData);
+  saveApplicantToServer(formData); // Save to DB immediately
   onComplete(formData);
 }
 

@@ -113,6 +113,19 @@ export async function addReservation(reservation) {
 }
 
 /**
+ * Save applicant info to server (independently of reservation)
+ * @param {Object} applicant
+ */
+export async function saveApplicantToServer(applicant) {
+    try {
+        await postToApi('saveApplicant', applicant);
+    } catch (e) {
+        console.error('Failed to save applicant to server:', e);
+        // Don't block UI, just log
+    }
+}
+
+/**
  * Delete a reservation
  * @param {{ seniorId: string, date: string, time: string }} reservation
  */

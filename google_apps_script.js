@@ -60,6 +60,9 @@ function doPost(e) {
             return success(deleteSenior(payload));
         } else if (action === 'deleteReservation') {
             return success(deleteReservation(payload));
+        } else if (action === 'saveApplicant') {
+            saveApplicant(payload);
+            return success({ status: 'saved' });
         } else if (action === 'uploadImage') { // Special helper if needed separately
             // Usually handled inside addSenior/updateSenior logic if saving file
         }
